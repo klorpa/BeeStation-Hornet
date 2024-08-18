@@ -13,13 +13,14 @@
 	name = "space heater"
 	desc = "Made by Space Amish using traditional space techniques, this heater/cooler is guaranteed not to set the station on fire. Warranty void if used in engines."
 	max_integrity = 250
-	armor = list(MELEE = 0,  BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, BIO = 100, RAD = 100, FIRE = 80, ACID = 10, STAMINA = 0)
+	armor = list(MELEE = 0,  BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, BIO = 100, RAD = 100, FIRE = 80, ACID = 10, STAMINA = 0, BLEED = 0)
 	circuit = /obj/item/circuitboard/machine/space_heater
 	//We don't use area power, we always use the cell
 	use_power = NO_POWER_USE
+	interacts_with_air = TRUE
 
 	///The cell we spawn with
-	var/obj/item/stock_parts/cell/cell = /obj/item/stock_parts/cell
+	var/obj/item/stock_parts/cell/cell = null
 	///Is the machine on?
 	var/on = FALSE
 	///What is the mode we are in now?
@@ -46,18 +47,14 @@
 
 /obj/machinery/space_heater/Initialize(mapload)
 	. = ..()
-	if(ispath(cell))
-		cell = new cell(src)
 	update_appearance()
+	SSair.start_processing_machine(src)
 
 /obj/machinery/space_heater/Destroy()
-	SSair.atmos_air_machinery -= src
+	SSair.stop_processing_machine(src)
 	return..()
 
 /obj/machinery/space_heater/on_deconstruction()
-	if(cell)
-		LAZYADD(component_parts, cell)
-		cell = null
 	return ..()
 
 /obj/machinery/space_heater/examine(mob/user)
@@ -68,7 +65,7 @@
 	else
 		. += "There is no power cell installed."
 	if(in_range(user, src) || isobserver(user))
-		. += "<span class='notice'>The status display reads: Temperature range at <b>[settable_temperature_range]°C</b>.<br>Heating power at <b>[heating_power*0.001]kJ</b>.<br>Power consumption at <b>[(efficiency*-0.0025)+150]%</b>.</span>" //100%, 75%, 50%, 25%
+		. += "<span class='notice'>The status display reads: Temperature range at <b>[settable_temperature_range]°C</b>.<br>Heating power at <b>[siunit(heating_power, "W", 1)]</b>.<br>Power consumption at <b>[(efficiency*-0.0025)+150]%</b>.</span>" //100%, 75%, 50%, 25%
 
 /obj/machinery/space_heater/update_icon_state()
 	. = ..()
@@ -129,12 +126,15 @@
 
 /obj/machinery/space_heater/RefreshParts()
 	. = ..()
+	cell = null
 	var/laser = 0
 	var/cap = 0
 	for(var/obj/item/stock_parts/micro_laser/M in component_parts)
 		laser += M.rating
 	for(var/obj/item/stock_parts/capacitor/M in component_parts)
 		cap += M.rating
+	for(var/obj/item/stock_parts/cell/M in component_parts)
+		cell = M
 
 	heating_power = (laser * 2) * 100000
 	settable_temperature_range = cap * 30
@@ -177,6 +177,7 @@
 		if(!user.transferItemToLoc(I, src))
 			return
 		cell = I
+		component_parts.Add(I)
 		I.add_fingerprint(usr)
 		user.visible_message("<span class='notice'>\The [user] inserts a power cell into \the [src].</span>", "<span class ='notice'>You insert the power cell into \the [src].<span>")
 		SStgui.update_uis(src)
@@ -203,9 +204,9 @@
 	usr.visible_message("<span class='notice'>[usr] switches [on ? "on" : "off"] \the [src].</span>", "<span class='notice'>You switch [on ? "on" : "off"] \the [src].</span>")
 	update_appearance()
 	if(on)
-		SSair.atmos_air_machinery += src
+		SSair.start_processing_machine(src)
 	else
-		SSair.atmos_air_machinery -= src
+		SSair.stop_processing_machine(src)
 
 /obj/machinery/space_heater/ui_state(mob/user)
 	return GLOB.physical_state
@@ -268,11 +269,13 @@
 					settable_temperature_median + settable_temperature_range)
 		if("eject")
 			if(panel_open && cell)
-				cell.forceMove(drop_location())
 				cell = null
+				for(var/obj/item/stock_parts/cell/M in component_parts)
+					M.forceMove(drop_location())
+					component_parts.Remove(M)
 				. = TRUE
 
-//Space Heaters without cel
+//Space Heaters without a cell
 /obj/machinery/space_heater/no_cell
 	cell = null
 
@@ -285,7 +288,10 @@
 /obj/machinery/space_heater/atmos
 
 /obj/machinery/space_heater/atmos/Initialize(mapload)
-	cell = /obj/item/stock_parts/cell/hyper
+	for(var/obj/item/stock_parts/cell/M in component_parts)
+		QDEL_NULL(M)
+		component_parts.Add(/obj/item/stock_parts/cell/hyper)
+	RefreshParts()
 	. = ..()
 
 #undef HEATER_MODE_STANDBY

@@ -1,6 +1,6 @@
 #define TRANSFORMATION_DURATION 22
 
-/mob/living/carbon/proc/monkeyize(tr_flags = (TR_KEEPITEMS | TR_KEEPVIRUS | TR_DEFAULTMSG | TR_KEEPAI), skip_animation = FALSE, original_species = /datum/species/human)
+/mob/living/carbon/proc/monkeyize(tr_flags = (TR_KEEPITEMS | TR_KEEPVIRUS | TR_DEFAULTMSG | TR_KEEPAI), skip_animation = FALSE, keep_original_species = FALSE)
 	if (notransform || transformation_timer)
 		return
 
@@ -47,9 +47,11 @@
 	O.updateappearance(icon_update=0)
 
 	//store original species
-	for(var/datum/mutation/race/M in O.dna.mutations)
-		M.original_species = original_species
-		break //Can't be more than one monkified in a DNA set so, no need to continue the loop
+	if(keep_original_species)
+		for(var/datum/mutation/race/M in O.dna.mutations)
+			if(!isnull(dna.species))
+				M.original_species = dna.species.type
+			break //Can't be more than one monkified in a DNA set so, no need to continue the loop
 
 	if(suiciding)
 		O.set_suicide(suiciding)
@@ -138,13 +140,14 @@
 
 	if (tr_flags & TR_DEFAULTMSG)
 		to_chat(O, "<B>You are now a monkey.</B>")
+	SEND_SIGNAL(src, COMSIG_CARBON_TRANSFORMED, O)
 
 	for(var/A in loc.vars)
 		if(loc.vars[A] == src)
 			loc.vars[A] = O
 
 	O.update_sight()
-	transfer_observers_to(O)
+	transfer_observers_to(O, TRUE)
 
 	. = O
 
@@ -281,11 +284,13 @@
 	if (tr_flags & TR_DEFAULTMSG)
 		to_chat(O, "<B>You are now a living teratoma.</B>")
 
+	SEND_SIGNAL(src, COMSIG_CARBON_TRANSFORMED, O)
+
 	for(var/A in loc.vars)
 		if(loc.vars[A] == src)
 			loc.vars[A] = O
 
-	transfer_observers_to(O)
+	transfer_observers_to(O, TRUE)
 
 	. = O
 
@@ -294,7 +299,7 @@
 //////////////////////////           Humanize               //////////////////////////////
 //Could probably be merged with monkeyize but other transformations got their own procs, too
 
-/mob/living/carbon/proc/humanize(tr_flags = (TR_KEEPITEMS | TR_KEEPVIRUS | TR_DEFAULTMSG | TR_KEEPAI), original_species = /datum/species/human)
+/mob/living/carbon/proc/humanize(tr_flags = (TR_KEEPITEMS | TR_KEEPVIRUS | TR_DEFAULTMSG | TR_KEEPAI), keep_original_species = FALSE, var/datum/species/original_species)
 	if (notransform || transformation_timer)
 		return
 
@@ -331,6 +336,7 @@
 		if(C.anchored)
 			continue
 		O.equip_to_appropriate_slot(C)
+
 	dna.transfer_identity(O, tr_flags & TR_KEEPSE)
 	O.dna.set_se(FALSE, GET_INITIALIZED_MUTATION(RACEMUT))
 	//Reset offsets to match human settings, in-case they have been changed
@@ -427,17 +433,30 @@
 		else if(O.ai_controller)
 			QDEL_NULL(O.ai_controller)
 
-	if(O.dna.species && !istype(O.dna.species, /datum/species/monkey))
-		O.set_species(O.dna.species)
-	else
-		O.set_species(original_species)
+	if(keep_original_species && isnull(original_species))
+		original_species = /datum/species/human
 
+	if(O.dna.species && !istype(O.dna.species, /datum/species/monkey))
+		if(isnull(O.dna.species))
+			O.set_species(/datum/species/human)
+		else
+			O.set_species(O.dna.species)
+	else
+		if(keep_original_species)
+			if(isnull(original_species) || !ispath(original_species, /datum/species))
+				O.set_species(/datum/species/human)
+			else
+				O.set_species(original_species)
+		else
+			O.set_species(/datum/species/human)
 
 	O.a_intent = INTENT_HELP
 	if (tr_flags & TR_DEFAULTMSG)
-		to_chat(O, "<B>You are now \a [original_species].</B>")
+		to_chat(O, "<B>You are now \a [O.dna.species]].</B>")
 
-	transfer_observers_to(O)
+	SEND_SIGNAL(src, COMSIG_CARBON_TRANSFORMED, O)
+
+	transfer_observers_to(O, TRUE)
 
 	. = O
 
@@ -452,6 +471,8 @@
 	if(notransform)
 		return TRUE
 	notransform = TRUE
+	ADD_TRAIT(src, TRAIT_IMMOBILIZED, TRAIT_GENERIC)
+	ADD_TRAIT(src, TRAIT_HANDS_BLOCKED, TRAIT_GENERIC)
 	Paralyze(1, ignore_canstun = TRUE)
 
 	if(delete_items)
@@ -462,8 +483,6 @@
 	regenerate_icons()
 	icon = null
 	invisibility = INVISIBILITY_MAXIMUM
-	for(var/t in bodyparts)
-		qdel(t)
 
 /mob/living/carbon/AIize(transfer_after = TRUE, client/preference_source)
 	return pre_transform() ? null : ..()
@@ -496,7 +515,7 @@
 	. = new /mob/living/silicon/ai(pick(landmark_loc), null, src)
 
 	if(preference_source)
-		apply_pref_name("ai",preference_source)
+		apply_pref_name(/datum/preference/name/ai, preference_source)
 
 	qdel(src)
 
@@ -506,13 +525,14 @@
 
 	var/mob/living/silicon/robot/R = new /mob/living/silicon/robot(loc)
 
+	R.job = JOB_NAME_CYBORG
 	R.gender = gender
 	R.invisibility = 0
 
 	if(client)
 		R.updatename(client)
 
-	if(mind)		//TODO
+	if(mind)//TODO //huh?
 		if(!transfer_after)
 			mind.active = FALSE
 		mind.transfer_to(R)
@@ -520,18 +540,26 @@
 		R.key = key
 
 	if(R.mmi)
-		R.mmi.name = "[initial(R.mmi.name)]: [real_name]"
-		if(R.mmi.brain)
-			R.mmi.brain.name = "[real_name]'s brain"
-		if(R.mmi.brainmob)
-			R.mmi.brainmob.real_name = real_name //the name of the brain inside the cyborg is the robotized human's name.
-			R.mmi.brainmob.name = real_name
+		R.mmi.transfer_identity(src)
 
-	R.job = JOB_NAME_CYBORG
 	R.notify_ai(NEW_BORG)
 
 	. = R
+	if(R.ckey && is_banned_from(R.ckey, JOB_NAME_CYBORG))
+		INVOKE_ASYNC(R, TYPE_PROC_REF(/mob/living/silicon/robot, replace_banned_cyborg))
 	qdel(src)
+
+/mob/living/silicon/robot/proc/replace_banned_cyborg()
+	to_chat(src, "<span class='userdanger'>You are job banned from cyborg! Appeal your job ban if you want to avoid this in the future!</span>")
+	ghostize(FALSE)
+
+	var/list/mob/dead/observer/candidates = poll_candidates_for_mob("Do you want to play as [src]?", JOB_NAME_CYBORG, null, 7.5 SECONDS, src, ignore_category = FALSE)
+	if(LAZYLEN(candidates))
+		var/mob/dead/observer/chosen_candidate = pick(candidates)
+		message_admins("[key_name_admin(chosen_candidate)] has taken control of ([key_name_admin(src)]) to replace a jobbanned player.")
+		key = chosen_candidate.key
+	else
+		set_playable(JOB_NAME_CYBORG)
 
 //human -> alien
 /mob/living/carbon/human/proc/Alienize()
@@ -628,8 +656,9 @@
 /mob/living/carbon/human/Animalize()
 
 	var/list/mobtypes = typesof(/mob/living/simple_animal)
-	var/mobpath = input("Which type of mob should [src] turn into?", "Choose a type") in sort_list(mobtypes, GLOBAL_PROC_REF(cmp_typepaths_asc))
-
+	var/mobpath = tgui_input_list(usr, "Which type of mob should [src] turn into?", "Choose a type", sort_list(mobtypes, GLOBAL_PROC_REF(cmp_typepaths_asc)))
+	if(isnull(mobpath))
+		return
 	if(!mobpath)
 		to_chat(usr, "<span class='danger'>Sorry but this mob type is currently unavailable.</span>")
 		return
@@ -642,15 +671,16 @@
 	new_mob.key = key
 	new_mob.a_intent = INTENT_HARM
 
-
 	to_chat(new_mob, "You suddenly feel more... animalistic.")
 	. = new_mob
 	qdel(src)
 
 /mob/proc/Animalize()
-	var/list/mobtypes = typesof(/mob/living/simple_animal)
-	var/mobpath = input("Which type of mob should [src] turn into?", "Choose a type") in sort_list(mobtypes, GLOBAL_PROC_REF(cmp_typepaths_asc))
 
+	var/list/mobtypes = typesof(/mob/living/simple_animal)
+	var/mobpath = tgui_input_list(usr, "Which type of mob should [src] turn into?", "Choose a type", sort_list(mobtypes, GLOBAL_PROC_REF(cmp_typepaths_asc)))
+	if(isnull(mobpath))
+		return
 	if(!mobpath)
 		to_chat(usr, "<span class='danger'>Sorry but this mob type is currently unavailable.</span>")
 		return
@@ -659,7 +689,7 @@
 
 	new_mob.key = key
 	new_mob.a_intent = INTENT_HARM
-	to_chat(new_mob, "You feel more... animalistic")
+	to_chat(new_mob, "<span class='boldnotice'>You feel more... animalistic!</span>")
 
 	. = new_mob
 	qdel(src)

@@ -137,7 +137,6 @@
 	merger.set_moles(spawn_id, spawn_mol * delta_time)
 	merger.set_temperature(spawn_temp)
 	O.assume_air(merger)
-	O.air_update_turf(TRUE)
 
 /obj/machinery/atmospherics/miner/attack_ai(mob/living/silicon/user)
 	if(broken)
@@ -159,7 +158,7 @@
 	overlay_color = "#007FFF"
 	spawn_id = GAS_O2
 
-/obj/machinery/atmospherics/miner/toxins
+/obj/machinery/atmospherics/miner/plasma
 	name = "\improper Plasma Gas Miner"
 	overlay_color = "#FF0000"
 	spawn_id = GAS_PLASMA
@@ -224,7 +223,7 @@
 	overlay_color = "#007FFF"
 	spawn_id = GAS_O2
 
-/obj/machinery/atmospherics/miner/station/toxins
+/obj/machinery/atmospherics/miner/station/plasma
 	name = "\improper Plasma Gas Miner"
 	overlay_color = "#FF0000"
 	spawn_id = GAS_PLASMA

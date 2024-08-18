@@ -214,7 +214,7 @@
 		deltimer(loop_timer_id)
 		loop_timer_id = null
 	to_chat(invoker, "<span class='brass'>You are no longer invoking <b>[name]</b></span>")
-	qdel(progress)
+	progress.end_progress()
 	PH.remove_ranged_ability()
 	invoking_slab.charge_overlay = null
 	invoking_slab.update_icon()
@@ -238,7 +238,7 @@
 	icon_icon = 'icons/mob/actions/actions_clockcult.dmi'
 	background_icon_state = "bg_clock"
 	buttontooltipstyle = "brass"
-	check_flags = AB_CHECK_RESTRAINED|AB_CHECK_STUN|AB_CHECK_CONSCIOUS
+	check_flags = AB_CHECK_HANDS_BLOCKED|AB_CHECK_INCAPACITATED|AB_CHECK_CONSCIOUS
 
 /datum/action/innate/clockcult/quick_bind
 	name = "Quick Bind"
@@ -297,7 +297,7 @@
 	return ..()
 
 /datum/action/innate/clockcult/transmit/Activate()
-	hierophant_message(stripped_input(owner, "What do you want to tell your allies?", "Hierophant Transmit", ""), owner, "<span class='brass'>")
+	hierophant_message(tgui_input_text(owner, "What do you want to tell your allies?", "Hierophant Transmit", "", encode = FALSE), owner, "<span class='brass'>")
 
 /datum/action/innate/clockcult/transmit/Grant(mob/M)
 	..(M)

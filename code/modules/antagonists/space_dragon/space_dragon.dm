@@ -2,10 +2,11 @@
 	name = "Space Dragon"
 	roundend_category = "space dragons"
 	antagpanel_category = "Space Dragon"
-	job_rank = ROLE_SPACE_DRAGON
+	banning_key = ROLE_SPACE_DRAGON
 	show_in_antagpanel = TRUE
 	show_name_in_check_antagonists = TRUE
 	show_to_ghosts = TRUE
+	// TODO: ui_name = "AntagInfoDragon"
 	var/list/datum/mind/carp = list()
 	/// The innate ability to summon rifts
 	var/datum/action/innate/summon_rift/rift_ability
@@ -57,7 +58,7 @@
 		/area/security/courtroom,
 	))
 
-	var/list/possible_areas = GLOB.sortedAreas.Copy()
+	var/list/possible_areas = GLOB.areas.Copy()
 	for(var/area/possible_area as anything in possible_areas)
 		if(!is_type_in_typecache(possible_area, allowed_areas) || is_type_in_typecache(possible_area, blocked_areas) || initial(possible_area.outdoors))
 			possible_areas -= possible_area
@@ -138,7 +139,7 @@
 /datum/antagonist/space_dragon/proc/rift_empower(is_permanent)
 	owner.current.fully_heal()
 	owner.current.add_filter("anger_glow", 3, list("type" = "outline", "color" = "#ff330030", "size" = 5))
-	owner.current.add_movespeed_modifier(MOVESPEED_ID_DRAGON_RAGE, multiplicative_slowdown = -0.5)
+	owner.current.add_movespeed_modifier(/datum/movespeed_modifier/rift_empowerment)
 	addtimer(CALLBACK(src, PROC_REF(rift_depower)), 30 SECONDS)
 
 /**
@@ -150,7 +151,7 @@
 /datum/antagonist/space_dragon/proc/permanent_empower()
 	owner.current.fully_heal()
 	owner.current.add_filter("anger_glow", 3, list("type" = "outline", "color" = "#ff330030", "size" = 5))
-	owner.current.add_movespeed_modifier(MOVESPEED_ID_DRAGON_RAGE, multiplicative_slowdown = -0.5)
+	owner.current.add_movespeed_modifier(/datum/movespeed_modifier/rift_empowerment)
 
 /**
  * Removes Space Dragon's rift speed buff.
@@ -161,7 +162,7 @@
  */
 /datum/antagonist/space_dragon/proc/rift_depower()
 	owner.current.remove_filter("anger_glow")
-	owner.current.remove_movespeed_modifier(MOVESPEED_ID_DRAGON_RAGE)
+	owner.current.remove_movespeed_modifier(/datum/movespeed_modifier/rift_empowerment)
 
 /**
  * Destroys all of Space Dragon's current rifts.

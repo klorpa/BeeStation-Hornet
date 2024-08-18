@@ -17,10 +17,10 @@
 /obj/machinery/light{
 	dir = 1
 	},
-/turf/open/floor/plasteel/tech/grid,
+/turf/open/floor/iron/tech/grid,
 /area/shuttle/hunter)
 "aw" = (
-/obj/effect/turf_decal/techfloor/corners{
+/obj/effect/turf_decal/edges/techfloor/corners{
 	dir = 8
 	},
 /obj/structure/reagent_dispensers/watertank,
@@ -34,33 +34,47 @@
 	req_access = null;
 	req_access_txt = "181"
 	},
-/turf/open/floor/plasteel/tech,
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "az" = (
-/obj/machinery/atmospherics/pipe/simple/supplymain/hidden,
 /obj/structure/lattice/catwalk/over,
 /obj/structure/cable/yellow{
 	icon_state = "1-2"
 	},
 /obj/effect/decal/cleanable/dirt/dust,
+/obj/machinery/atmospherics/pipe/simple/purple/hidden,
 /turf/open/floor/plating,
+/area/shuttle/hunter)
+"aN" = (
+/obj/machinery/power/apc/auto_name/directional/north{
+	cell_type = /obj/item/stock_parts/cell/high/plus;
+	req_access = list(181)
+	},
+/obj/structure/cable/yellow{
+	icon_state = "0-2"
+	},
+/obj/effect/decal/cleanable/dirt/dust,
+/obj/machinery/atmospherics/pipe/manifold/purple/hidden{
+	dir = 1
+	},
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "aS" = (
 /obj/structure/curtain/bounty,
-/turf/open/floor/plasteel/tech/grid,
+/turf/open/floor/iron/tech/grid,
 /area/shuttle/hunter)
 "aV" = (
 /obj/effect/turf_decal/siding/thinplating/dark{
 	dir = 10
 	},
-/obj/effect/turf_decal/techfloor/corners{
+/obj/effect/turf_decal/edges/techfloor/corners{
 	dir = 8
 	},
-/turf/open/floor/plasteel/dark,
+/turf/open/floor/iron/dark,
 /area/shuttle/hunter)
 "bc" = (
-/obj/effect/turf_decal/techfloor,
-/obj/effect/turf_decal/techfloor{
+/obj/effect/turf_decal/edges/techfloor,
+/obj/effect/turf_decal/edges/techfloor{
 	dir = 1
 	},
 /obj/structure/guncase{
@@ -79,10 +93,10 @@
 	pixel_y = 32
 	},
 /obj/effect/decal/cleanable/dirt/dust,
-/turf/open/floor/plasteel/tech/grid,
+/turf/open/floor/iron/tech/grid,
 /area/shuttle/hunter)
 "ca" = (
-/obj/effect/turf_decal/techfloor{
+/obj/effect/turf_decal/edges/techfloor{
 	dir = 8
 	},
 /obj/structure/chair/fancy/shuttle{
@@ -92,16 +106,16 @@
 	pixel_y = -32
 	},
 /obj/machinery/light,
-/turf/open/floor/plasteel/tech,
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "cb" = (
-/obj/machinery/computer/camera_advanced{
+/obj/machinery/computer/camera_advanced/bounty_hunter{
 	dir = 8
 	},
-/obj/effect/turf_decal/techfloor{
+/obj/effect/turf_decal/edges/techfloor{
 	dir = 4
 	},
-/turf/open/floor/plasteel/tech,
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "cr" = (
 /obj/effect/turf_decal/siding/thinplating/dark{
@@ -117,12 +131,9 @@
 /obj/item/multitool{
 	pixel_x = 9
 	},
-/turf/open/floor/plasteel/techmaint,
+/turf/open/floor/iron/techmaint,
 /area/shuttle/hunter)
 "dH" = (
-/obj/machinery/atmospherics/pipe/simple/supplymain/hidden{
-	dir = 8
-	},
 /obj/structure/lattice/catwalk/over,
 /obj/effect/turf_decal/stripes/line{
 	dir = 8
@@ -130,6 +141,9 @@
 /obj/effect/decal/cleanable/dirt/dust,
 /obj/machinery/airalarm/directional/north,
 /obj/machinery/light/small,
+/obj/machinery/atmospherics/pipe/simple/purple/hidden{
+	dir = 8
+	},
 /turf/open/floor/plating,
 /area/shuttle/hunter)
 "ei" = (
@@ -141,7 +155,7 @@
 /obj/structure/closet/crate/freezer,
 /obj/item/storage/box/donkpockets/donkpocketspicy,
 /obj/item/storage/fancy/donut_box,
-/turf/open/floor/plasteel/techmaint,
+/turf/open/floor/iron/techmaint,
 /area/shuttle/hunter)
 "eM" = (
 /obj/structure/fans/tiny,
@@ -160,20 +174,20 @@
 /obj/effect/mob_spawn/human/fugitive_hunter{
 	dir = 4
 	},
-/turf/open/floor/plasteel/ridged/steel,
+/turf/open/floor/iron/ridged/steel,
 /area/shuttle/hunter)
 "fW" = (
 /obj/effect/turf_decal/siding/thinplating/dark{
 	dir = 9
 	},
 /obj/effect/decal/cleanable/dirt/dust,
-/turf/open/floor/plasteel/dark,
+/turf/open/floor/iron/dark,
 /area/shuttle/hunter)
 "hn" = (
 /obj/machinery/atmospherics/components/unary/portables_connector/visible{
 	dir = 8
 	},
-/obj/machinery/portable_atmospherics/canister/toxins,
+/obj/machinery/portable_atmospherics/canister/plasma,
 /obj/effect/turf_decal/bot/right,
 /obj/effect/turf_decal/bot/left,
 /obj/structure/sign/poster/contraband/tools{
@@ -181,21 +195,21 @@
 	},
 /obj/effect/decal/cleanable/dirt/dust,
 /obj/effect/decal/cleanable/robot_debris,
-/turf/open/floor/plasteel/tech/grid,
+/turf/open/floor/iron/tech/grid,
 /area/shuttle/hunter)
 "iD" = (
 /obj/effect/turf_decal/tile/dark/fourcorners/contrasted,
 /obj/effect/turf_decal/stripes/line{
 	dir = 4
 	},
-/turf/open/floor/plasteel/grid/steel,
+/turf/open/floor/iron/grid/steel,
 /area/shuttle/hunter)
 "jl" = (
 /obj/effect/turf_decal/stripes/line{
 	dir = 8
 	},
 /obj/effect/decal/cleanable/dirt/dust,
-/turf/open/floor/plasteel/tech,
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "js" = (
 /obj/item/kirbyplants{
@@ -206,13 +220,13 @@
 	dir = 2;
 	layer = 4.1
 	},
-/obj/effect/turf_decal/techfloor{
+/obj/effect/turf_decal/edges/techfloor{
 	dir = 1
 	},
 /obj/structure/extinguisher_cabinet{
 	pixel_x = 26
 	},
-/turf/open/floor/plasteel/tech,
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "jw" = (
 /obj/machinery/atmospherics/components/unary/plasma_refiner{
@@ -228,24 +242,24 @@
 /obj/machinery/light/small{
 	dir = 4
 	},
-/turf/open/floor/plasteel/tech,
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "jA" = (
-/obj/machinery/atmospherics/pipe/manifold/supplymain/hidden,
 /obj/structure/lattice/catwalk/over,
 /obj/structure/cable/yellow{
 	icon_state = "1-4"
 	},
 /obj/effect/decal/cleanable/dirt/dust,
+/obj/machinery/atmospherics/pipe/manifold/purple/hidden,
 /turf/open/floor/plating{
-	icon_state = "panelscorched"
+	burnt = 1
 	},
 /area/shuttle/hunter)
 "jC" = (
 /obj/effect/turf_decal/stripes/line{
 	dir = 4
 	},
-/turf/open/floor/plasteel/tech,
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "kj" = (
 /obj/machinery/shuttle/engine/plasma{
@@ -257,7 +271,7 @@
 /obj/machinery/door/airlock/hatch{
 	req_access_txt = "181"
 	},
-/turf/open/floor/plasteel/tech,
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "kM" = (
 /obj/effect/turf_decal/tile/dark/fourcorners/contrasted,
@@ -268,26 +282,26 @@
 /obj/effect/turf_decal/stripes/line{
 	dir = 4
 	},
-/turf/open/floor/plasteel/grid/steel,
+/turf/open/floor/iron/grid/steel,
 /area/shuttle/hunter)
 "lg" = (
 /obj/machinery/computer/shuttle_flight/hunter{
 	dir = 8
 	},
-/obj/effect/turf_decal/techfloor{
+/obj/effect/turf_decal/edges/techfloor{
 	dir = 4
 	},
-/turf/open/floor/plasteel/tech,
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "ls" = (
-/obj/machinery/atmospherics/pipe/manifold/supplymain/hidden{
-	dir = 8
-	},
-/obj/effect/turf_decal/techfloor{
+/obj/effect/turf_decal/edges/techfloor{
 	dir = 5
 	},
 /obj/item/trash/candy,
-/turf/open/floor/plasteel/tech,
+/obj/machinery/atmospherics/pipe/manifold/purple/hidden{
+	dir = 8
+	},
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "lw" = (
 /obj/effect/turf_decal/tile/black/fourcorners/contrasted,
@@ -299,14 +313,43 @@
 /obj/effect/mob_spawn/human/fugitive_hunter{
 	dir = 4
 	},
-/turf/open/floor/plasteel/ridged/steel,
+/turf/open/floor/iron/ridged/steel,
+/area/shuttle/hunter)
+"mn" = (
+/obj/structure/railing{
+	dir = 6;
+	layer = 4.1
+	},
+/obj/item/trash/sosjerky{
+	anchored = 1;
+	color = "#808080";
+	pixel_x = 8;
+	pixel_y = 8
+	},
+/obj/effect/decal/cleanable/greenglow{
+	color = "#808080"
+	},
+/obj/item/cigbutt{
+	anchored = 1;
+	color = "#808080";
+	layer = 2;
+	pixel_x = -4;
+	pixel_y = 11
+	},
+/obj/structure/lattice{
+	layer = 3;
+	color = "#808080"
+	},
+/turf/open/floor/plating/elevatorshaft{
+	color = "#808080"
+	},
 /area/shuttle/hunter)
 "ms" = (
 /obj/structure/railing{
 	dir = 2;
 	layer = 4.1
 	},
-/turf/open/floor/plasteel/stairs{
+/turf/open/floor/iron/stairs{
 	icon = 'icons/obj/stairs.dmi';
 	dir = 4
 	},
@@ -315,64 +358,61 @@
 /obj/machinery/door/airlock/highsecurity{
 	req_access_txt = "181"
 	},
-/turf/open/floor/plasteel/dark,
+/turf/open/floor/iron/dark,
 /area/shuttle/hunter)
 "nn" = (
 /turf/closed/wall/mineral/titanium/survival/nodiagonal,
 /area/shuttle/hunter)
 "nL" = (
-/obj/effect/turf_decal/techfloor{
+/obj/effect/turf_decal/edges/techfloor{
 	dir = 1
 	},
-/turf/open/floor/plasteel/tech,
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "nY" = (
-/obj/machinery/atmospherics/pipe/simple/supplymain/hidden,
 /obj/structure/lattice/catwalk/over,
 /obj/structure/cable/yellow{
 	icon_state = "1-2"
 	},
+/obj/machinery/atmospherics/pipe/simple/purple/hidden,
 /turf/open/floor/plating{
-	icon_state = "platingdmg2"
+	broken = 1
 	},
 /area/shuttle/hunter)
 "oH" = (
 /obj/structure/tank_dispenser/oxygen,
-/obj/machinery/atmospherics/pipe/simple/supplymain/hidden{
-	dir = 4
-	},
 /obj/effect/turf_decal/stripes/line{
 	dir = 8
 	},
 /obj/structure/sign/poster/contraband/busty_backdoor_xeno_babes_6{
 	pixel_y = 32
 	},
-/turf/open/floor/plasteel/tech,
+/obj/machinery/atmospherics/pipe/simple/purple/hidden{
+	dir = 8
+	},
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "oX" = (
-/turf/open/floor/plasteel/stairs/left,
+/turf/open/floor/iron/stairs/left,
 /area/shuttle/hunter)
 "pB" = (
 /obj/machinery/atmospherics/components/unary/portables_connector/visible{
 	dir = 8
 	},
-/obj/machinery/portable_atmospherics/canister/toxins,
+/obj/machinery/portable_atmospherics/canister/plasma,
 /obj/effect/turf_decal/bot/right,
 /obj/effect/turf_decal/bot/left,
-/turf/open/floor/plasteel/tech/grid,
+/turf/open/floor/iron/tech/grid,
 /area/shuttle/hunter)
 "pC" = (
-/obj/machinery/atmospherics/pipe/simple/supplymain/hidden,
-/obj/effect/turf_decal/techfloor,
+/obj/effect/turf_decal/edges/techfloor,
 /obj/structure/cable/yellow{
 	icon_state = "1-2"
 	},
-/turf/open/floor/plasteel/tech,
+/obj/machinery/atmospherics/pipe/simple/purple/hidden,
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "qj" = (
-/obj/machinery/atmospherics/pipe/simple/supplymain/hidden{
-	dir = 8
-	},
 /obj/structure/lattice/catwalk/over,
 /obj/effect/turf_decal/arrows{
 	pixel_y = 15;
@@ -386,6 +426,9 @@
 	icon_state = "1-4"
 	},
 /obj/effect/decal/cleanable/dirt/dust,
+/obj/machinery/atmospherics/pipe/simple/purple/hidden{
+	dir = 8
+	},
 /turf/open/floor/plating,
 /area/shuttle/hunter)
 "qs" = (
@@ -417,26 +460,26 @@
 "qu" = (
 /obj/structure/curtain/bounty,
 /obj/effect/decal/cleanable/dirt/dust,
-/turf/open/floor/plasteel/tech/grid,
+/turf/open/floor/iron/tech/grid,
 /area/shuttle/hunter)
 "qS" = (
-/obj/machinery/atmospherics/pipe/manifold4w/supplymain/hidden,
 /obj/structure/lattice/catwalk/over,
 /obj/structure/cable/yellow{
 	icon_state = "1-8"
 	},
 /obj/effect/decal/cleanable/dirt/dust,
+/obj/machinery/atmospherics/pipe/manifold4w/purple/hidden,
 /turf/open/floor/plating,
 /area/shuttle/hunter)
 "rb" = (
 /obj/effect/turf_decal/delivery,
 /obj/effect/decal/cleanable/cobweb/cobweb2,
 /obj/machinery/computer/fugitive_capture_computer,
-/turf/open/floor/plasteel/tech/grid,
+/turf/open/floor/iron/tech/grid,
 /area/shuttle/hunter)
 "ri" = (
-/obj/effect/turf_decal/techfloor,
-/turf/open/floor/plasteel/tech,
+/obj/effect/turf_decal/edges/techfloor,
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "rB" = (
 /obj/effect/turf_decal/tile/dark/fourcorners/contrasted,
@@ -444,61 +487,32 @@
 /obj/effect/turf_decal/stripes/line{
 	dir = 8
 	},
-/turf/open/floor/plasteel/grid/steel,
-/area/shuttle/hunter)
-"rX" = (
-/obj/structure/railing{
-	dir = 6;
-	layer = 4.1
-	},
-/obj/item/trash/sosjerky{
-	anchored = 1;
-	color = "#808080";
-	pixel_x = 8;
-	pixel_y = 8
-	},
-/obj/effect/decal/cleanable/greenglow{
-	color = "#808080"
-	},
-/obj/item/cigbutt{
-	anchored = 1;
-	color = "#808080";
-	layer = 2;
-	pixel_x = -4;
-	pixel_y = 11
-	},
-/obj/structure/lattice{
-	layer = 3;
-	color = "#808080"
-	},
-/turf/open/floor/plasteel/elevatorshaft{
-	color = "#808080"
-	},
+/turf/open/floor/iron/grid/steel,
 /area/shuttle/hunter)
 "rY" = (
 /obj/effect/turf_decal/siding/thinplating/dark{
 	dir = 6
 	},
-/obj/effect/turf_decal/techfloor/corners,
+/obj/effect/turf_decal/edges/techfloor/corners,
 /obj/effect/decal/cleanable/dirt/dust,
 /mob/living/simple_animal/pet/fox{
 	dir = 8
 	},
 /obj/structure/bed/dogbed,
-/turf/open/floor/plasteel/dark,
+/turf/open/floor/iron/dark,
 /area/shuttle/hunter)
 "sc" = (
-/obj/effect/turf_decal/techfloor{
+/obj/effect/turf_decal/edges/techfloor{
 	dir = 1
 	},
 /obj/structure/sign/poster/official/anniversary_vintage_reprint{
 	pixel_x = -32
 	},
 /obj/effect/decal/cleanable/dirt/dust,
-/turf/open/floor/plasteel/tech,
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "sS" = (
-/obj/effect/turf_decal/techfloor{
+/obj/effect/turf_decal/edges/techfloor{
 	dir = 8
 	},
 /obj/structure/reagent_dispensers/fueltank,
@@ -511,10 +525,10 @@
 	pixel_x = 32
 	},
 /obj/machinery/light/small,
-/turf/open/floor/plasteel/tech,
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "sZ" = (
-/obj/effect/turf_decal/techfloor{
+/obj/effect/turf_decal/edges/techfloor{
 	dir = 1
 	},
 /obj/effect/turf_decal/stripes/corner{
@@ -523,19 +537,19 @@
 /obj/structure/extinguisher_cabinet{
 	pixel_x = -24
 	},
-/turf/open/floor/plasteel/tech,
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "ua" = (
 /obj/effect/turf_decal/bot,
 /obj/effect/turf_decal/bot/left,
 /obj/machinery/suit_storage_unit/bounty,
-/turf/open/floor/plasteel/tech/grid,
+/turf/open/floor/iron/tech/grid,
 /area/shuttle/hunter)
 "vW" = (
 /obj/structure/chair/fancy/shuttle{
 	dir = 4
 	},
-/obj/effect/turf_decal/techfloor{
+/obj/effect/turf_decal/edges/techfloor{
 	dir = 1
 	},
 /obj/effect/decal/cleanable/dirt/dust,
@@ -543,31 +557,31 @@
 	req_access_txt = "181";
 	req_access = null
 	},
-/turf/open/floor/plasteel/tech,
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "wD" = (
-/obj/machinery/atmospherics/pipe/simple/supplymain/hidden{
-	dir = 8
-	},
 /obj/machinery/portable_atmospherics/scrubber,
 /obj/effect/turf_decal/delivery,
 /obj/effect/turf_decal/stripes/line{
 	dir = 8
 	},
 /obj/structure/grille/broken,
-/turf/open/floor/plasteel/tech,
+/obj/machinery/atmospherics/pipe/simple/purple/hidden{
+	dir = 8
+	},
+/turf/open/floor/iron/tech,
 /area/shuttle/hunter)
 "xf" = (
-/obj/machinery/atmospherics/pipe/simple/supplymain/hidden{
-	dir = 10
-	},
 /obj/structure/lattice/catwalk/over,
 /obj/effect/decal/cleanable/glass,
 /obj/structure/cable/yellow{
 	icon_state = "2-8"
 	},
+/obj/machinery/atmospherics/pipe/simple/purple/hidden{
+	dir = 10
+	},
 /turf/open/floor/plating{
-	icon_state = "panelscorched"
+	burnt = 1
 	},
 /area/shuttle/hunter)
 "yl" = (
@@ -584,7 +598,7 @@
 	pixel_x = -22;
 	req_access_txt = "181"
 	},
-/turf/open/floor/plasteel/tech/grid,
+/turf/open/floor/iron/tech/grid,
 /area/shuttle/hunter)
 "zh" = (
 /obj/effect/turf_decal/siding/thinplating/dark{
@@ -599,14 +613,14 @@
 	pixel_y = 22;
 	req_access_txt = "181"
 	},
-/turf/open/floor/plasteel/techmaint,
+/turf/open/floor/iron/techmaint,
 /area/shuttle/hunter)
 "zz" = (
 /obj/effect/turf_decal/tile/dark/fourcorners/contrasted,
 /obj/effect/turf_decal/stripes/line{
 	dir = 8
 	},
-/turf/open/floor/plasteel/grid/steel,
+/turf/open/floor/iron/grid/steel,
 /area/shuttle/hunter)
 "BE" = (
 /obj/structure/fluff/empty_sleeper{
@@ -615,458 +629,41 @@
 /obj/effect/turf_decal/tile/dark/fourcorners/contrasted,
 /obj/effect/decal/cleanable/dirt/dust,
 /obj/effect/turf_decal/delivery/white,
-/turf/open/floor/plasteel/ridged/steel,
+/turf/open/floor/iron/ridged/steel,
 /area/shuttle/hunter)
 "De" = (
-/obj/machinery/atmospherics/pipe/simple/supplymain/hidden{
-	dir = 4
-	},
 /obj/structure/lattice/catwalk/over,
 /obj/effect/turf_decal/stripes/line{
 	dir = 8
 	},
 /obj/machinery/light/small,
+/obj/machinery/atmospherics/pipe/simple/purple/hidden{
+	dir = 8
+	},
 /turf/open/floor/plating/rust,
 /area/shuttle/hunter)
 "ES" = (
-/obj/machinery/atmospherics/pipe/simple/supplymain/hidden{
-	dir = 8
-	},
 /obj/structure/lattice/catwalk/over,
 /obj/structure/sign/poster/contraband/missing_gloves{
 	pixel_y = 32
 	},
+/obj/machinery/atmospherics/pipe/simple/purple/hidden{
+	dir = 8
+	},
 /turf/open/floor/plating,
 /area/shuttle/hunter)
 "Fv" = (
-/obj/machinery/atmospherics/pipe/manifold/supplymain/hidden{
-	dir = 8
-	},
 /obj/structure/lattice/catwalk/over,
 /obj/structure/cable/yellow{
 	icon_state = "1-2"
 	},
 /obj/effect/decal/cleanable/dirt/dust,
-/turf/open/floor/plating,
-/area/shuttle/hunter)
-"GA" = (
-/obj/machinery/door/airlock/maintenance_hatch{
-	req_access_txt = "181"
-	},
-/obj/machinery/atmospherics/pipe/simple/supplymain/hidden,
-/obj/structure/lattice/catwalk/over,
-/obj/structure/cable/yellow{
-	icon_state = "1-2"
+/obj/machinery/atmospherics/pipe/manifold/purple/hidden{
+	dir = 8
 	},
 /turf/open/floor/plating,
 /area/shuttle/hunter)
-"GG" = (
-/obj/effect/turf_decal/techfloor,
-/obj/effect/turf_decal/caution,
-/obj/effect/decal/cleanable/glass{
-	pixel_x = -9;
-	pixel_y = 10
-	},
-/turf/open/floor/plasteel/tech,
-/area/shuttle/hunter)
-"Hl" = (
-/obj/effect/turf_decal/bot,
-/obj/effect/turf_decal/bot/left,
-/obj/structure/sign/poster/official/moth4{
-	pixel_y = 32
-	},
-/obj/machinery/light{
-	dir = 1
-	},
-/obj/machinery/suit_storage_unit/bounty,
-/turf/open/floor/plasteel/tech/grid,
-/area/shuttle/hunter)
-"Hr" = (
-/obj/machinery/atmospherics/pipe/manifold/supplymain/hidden{
-	dir = 1
-	},
-/obj/machinery/power/apc/auto_name/north{
-	cell_type = /obj/item/stock_parts/cell/high/plus;
-	req_access = list(181)
-	},
-/obj/structure/cable/yellow{
-	icon_state = "0-2"
-	},
-/obj/effect/decal/cleanable/dirt/dust,
-/turf/open/floor/plasteel/tech,
-/area/shuttle/hunter)
-"IA" = (
-/obj/effect/turf_decal/siding/thinplating/dark/corner,
-/obj/effect/turf_decal/siding/thinplating/dark/corner{
-	dir = 4
-	},
-/obj/effect/decal/cleanable/dirt/dust,
-/turf/open/floor/plasteel/techmaint,
-/area/shuttle/hunter)
-"IB" = (
-/obj/machinery/atmospherics/pipe/simple/supplymain/hidden{
-	dir = 4
-	},
-/obj/structure/lattice/catwalk/over,
-/obj/effect/decal/cleanable/dirt/dust,
-/turf/open/floor/plating,
-/area/shuttle/hunter)
-"JK" = (
-/obj/machinery/recharger,
-/obj/structure/table/reinforced{
-	color = "#c1b6a5"
-	},
-/obj/effect/turf_decal/stripes/line{
-	dir = 4
-	},
-/obj/machinery/light{
-	dir = 8
-	},
-/obj/item/cigbutt/cigarbutt{
-	pixel_y = 3;
-	pixel_x = 9
-	},
-/obj/item/storage/fancy/cigarettes/cigpack_syndicate{
-	pixel_x = -5
-	},
-/obj/item/lighter{
-	pixel_x = -8;
-	pixel_y = -3
-	},
-/turf/open/floor/plasteel/tech,
-/area/shuttle/hunter)
-"Kb" = (
-/obj/effect/turf_decal/siding/thinplating/dark{
-	dir = 1
-	},
-/obj/structure/sign/poster/contraband/bountyhunters{
-	pixel_y = 32
-	},
-/turf/open/floor/plasteel/techmaint,
-/area/shuttle/hunter)
-"Ko" = (
-/obj/structure/railing/corner,
-/obj/effect/turf_decal/techfloor,
-/obj/effect/decal/cleanable/dirt/dust,
-/turf/open/floor/plasteel/tech,
-/area/shuttle/hunter)
-"Lo" = (
-/turf/closed/wall/mineral/titanium/survival,
-/area/shuttle/hunter)
-"Lr" = (
-/obj/structure/rack,
-/obj/effect/turf_decal/techfloor,
-/obj/effect/turf_decal/stripes/corner{
-	dir = 1
-	},
-/obj/item/storage/toolbox/electrical,
-/obj/item/clothing/glasses/welding{
-	pixel_y = 5
-	},
-/obj/item/screwdriver{
-	pixel_y = -1
-	},
-/obj/structure/sign/poster/official/safety_internals{
-	pixel_x = -32
-	},
-/turf/open/floor/plasteel/tech,
-/area/shuttle/hunter)
-"Ly" = (
-/obj/effect/turf_decal/tile/dark/fourcorners/contrasted,
-/obj/structure/sign/poster/official/work_for_a_future{
-	pixel_y = -32
-	},
-/obj/effect/turf_decal/delivery/white,
-/obj/machinery/light{
-	dir = 4
-	},
-/obj/effect/mob_spawn/human/fugitive_hunter{
-	dir = 8
-	},
-/turf/open/floor/plasteel/ridged/steel,
-/area/shuttle/hunter)
-"LE" = (
-/turf/open/floor/plasteel/stairs/right,
-/area/shuttle/hunter)
-"Mj" = (
-/obj/structure/table/reinforced{
-	color = "#c1b6a5"
-	},
-/obj/machinery/button/door{
-	id = "hunters_windows";
-	name = "window shutters";
-	pixel_x = 7;
-	pixel_y = -3;
-	req_access_txt = "181"
-	},
-/obj/machinery/button/door{
-	id = "hunters_bridge";
-	name = "bridge shutters";
-	pixel_x = 7;
-	pixel_y = 6;
-	req_access_txt = "181"
-	},
-/obj/item/paper_bin{
-	pixel_x = -6
-	},
-/obj/item/pen/fourcolor{
-	pixel_x = -4
-	},
-/turf/open/floor/plasteel/tech,
-/area/shuttle/hunter)
-"Mq" = (
-/obj/effect/turf_decal/delivery,
-/obj/machinery/light{
-	dir = 1
-	},
-/obj/machinery/fugitive_capture,
-/turf/open/floor/plasteel/tech/grid,
-/area/shuttle/hunter)
-"MQ" = (
-/obj/machinery/door/airlock/hatch{
-	req_access_txt = "181"
-	},
-/obj/effect/turf_decal/siding/thinplating/dark{
-	dir = 1
-	},
-/obj/effect/turf_decal/siding/thinplating/dark,
-/turf/open/floor/plasteel/techmaint,
-/area/shuttle/hunter)
-"MR" = (
-/obj/effect/turf_decal/siding/thinplating/dark{
-	dir = 4
-	},
-/turf/open/floor/plasteel/dark,
-/area/shuttle/hunter)
-"Nn" = (
-/obj/effect/turf_decal/techfloor,
-/obj/effect/turf_decal/techfloor{
-	dir = 1
-	},
-/obj/structure/rack,
-/obj/item/melee/classic_baton/retractible_stun/bounty{
-	pixel_x = 13
-	},
-/obj/item/camera_bug{
-	pixel_x = 6;
-	pixel_y = 4
-	},
-/obj/machinery/light{
-	dir = 8
-	},
-/obj/item/storage/box/incapacitateshot{
-	pixel_x = -4;
-	pixel_y = -4
-	},
-/obj/item/storage/box/rubbershot{
-	pixel_x = 1
-	},
-/turf/open/floor/plasteel/tech/grid,
-/area/shuttle/hunter)
-"NG" = (
-/obj/machinery/door/poddoor/preopen{
-	id = "hunters_windows"
-	},
-/obj/structure/window/shuttle/survival_pod,
-/obj/structure/grille,
-/turf/open/floor/plating,
-/area/shuttle/hunter)
-"Og" = (
-/obj/structure/chair/fancy/shuttle{
-	dir = 4
-	},
-/obj/effect/decal/cleanable/dirt/dust,
-/turf/open/floor/plasteel/tech,
-/area/shuttle/hunter)
-"Pl" = (
-/obj/structure/window/reinforced{
-	dir = 4
-	},
-/obj/machinery/atmospherics/components/unary/shuttle/heater{
-	dir = 4
-	},
-/obj/machinery/door/poddoor/preopen{
-	id = "hunters_engines"
-	},
-/turf/open/floor/plating/airless,
-/area/shuttle/hunter)
-"RD" = (
-/turf/open/floor/plasteel/techmaint,
-/area/shuttle/hunter)
-"Sf" = (
-/obj/machinery/atmospherics/pipe/simple/supplymain/hidden{
-	dir = 9
-	},
-/obj/structure/table/reinforced{
-	color = "#c1b6a5"
-	},
-/obj/effect/turf_decal/techfloor{
-	dir = 4
-	},
-/obj/machinery/cell_charger,
-/obj/item/stock_parts/cell/crap{
-	pixel_x = -7;
-	pixel_y = 2
-	},
-/obj/item/stock_parts/cell/high/empty,
-/obj/item/trash/can{
-	pixel_x = -9
-	},
-/obj/item/stack/sheet/mineral/plasma/fifty{
-	pixel_y = -8;
-	pixel_x = 4
-	},
-/obj/effect/decal/cleanable/dirt/dust,
-/obj/machinery/light/small,
-/turf/open/floor/plasteel/tech,
-/area/shuttle/hunter)
-"Su" = (
-/obj/effect/turf_decal/techfloor{
-	dir = 1
-	},
-/obj/effect/decal/cleanable/oil,
-/obj/effect/decal/cleanable/dirt/dust,
-/turf/open/floor/plasteel/tech,
-/area/shuttle/hunter)
-"TB" = (
-/obj/machinery/atmospherics/pipe/simple/supplymain/hidden{
-	dir = 8
-	},
-/obj/structure/lattice/catwalk/over,
-/obj/item/trash/semki,
-/turf/open/floor/plating/rust,
-/area/shuttle/hunter)
-"Uw" = (
-/obj/machinery/computer/crew{
-	dir = 8
-	},
-/obj/effect/turf_decal/techfloor{
-	dir = 1
-	},
-/obj/effect/turf_decal/techfloor{
-	dir = 4
-	},
-/turf/open/floor/plasteel/tech,
-/area/shuttle/hunter)
-"UI" = (
-/turf/template_noop,
-/area/template_noop)
-"Vx" = (
-/obj/machinery/door/poddoor/preopen{
-	id = "hunters_bridge"
-	},
-/obj/structure/window/shuttle/survival_pod,
-/obj/structure/grille,
-/turf/open/floor/plating,
-/area/shuttle/hunter)
-"VG" = (
-/obj/effect/turf_decal/techfloor,
-/obj/effect/decal/cleanable/dirt/dust,
-/turf/open/floor/plasteel/tech,
-/area/shuttle/hunter)
-"VH" = (
-/obj/effect/turf_decal/delivery,
-/obj/machinery/launchpad,
-/obj/effect/decal/cleanable/dirt/dust,
-/obj/effect/decal/cleanable/blood/old,
-/obj/machinery/light,
-/turf/open/floor/pod/dark,
-/area/shuttle/hunter)
-"Wa" = (
-/obj/machinery/atmospherics/pipe/simple/supplymain/hidden{
-	dir = 8
-	},
-/obj/structure/table/reinforced{
-	color = "#c1b6a5"
-	},
-/obj/item/rack_parts{
-	pixel_x = 5;
-	pixel_y = 1
-	},
-/obj/item/rack_parts{
-	pixel_y = -2
-	},
-/obj/item/storage/toolbox/mechanical{
-	pixel_y = -4
-	},
-/obj/item/clothing/mask/gas{
-	pixel_x = -4
-	},
-/turf/open/floor/plasteel/tech,
-/area/shuttle/hunter)
-"XH" = (
-/obj/structure/railing/corner,
-/obj/effect/turf_decal/techfloor{
-	dir = 1
-	},
-/turf/open/floor/plasteel/tech,
-/area/shuttle/hunter)
-"XM" = (
-/obj/structure/table/reinforced{
-	color = "#c1b6a5"
-	},
-/obj/structure/railing{
-	dir = 8;
-	layer = 4.1
-	},
-/obj/effect/turf_decal/techfloor{
-	dir = 8
-	},
-/obj/item/flashlight/lamp{
-	pixel_x = -4;
-	pixel_y = 7
-	},
-/obj/item/binoculars{
-	pixel_x = 3
-	},
-/obj/item/gps{
-	pixel_x = 7
-	},
-/turf/open/floor/plasteel/tech,
-/area/shuttle/hunter)
-"Yj" = (
-/obj/effect/turf_decal/siding/thinplating/dark{
-	dir = 5
-	},
-/turf/open/floor/plasteel/dark,
-/area/shuttle/hunter)
-"Yp" = (
-/obj/effect/turf_decal/siding/thinplating/dark{
-	dir = 8
-	},
-/obj/effect/decal/cleanable/dirt/dust,
-/obj/structure/extinguisher_cabinet{
-	pixel_x = -27;
-	pixel_y = 1
-	},
-/turf/open/floor/plasteel/dark,
-/area/shuttle/hunter)
-"YJ" = (
-/obj/effect/turf_decal/techfloor{
-	dir = 8
-	},
-/turf/open/floor/plasteel/tech,
-/area/shuttle/hunter)
-"YS" = (
-/obj/machinery/atmospherics/components/unary/portables_connector/visible{
-	dir = 8
-	},
-/obj/machinery/portable_atmospherics/canister/toxins,
-/obj/effect/turf_decal/bot/right,
-/obj/effect/turf_decal/bot/left,
-/obj/machinery/light/small{
-	dir = 4
-	},
-/turf/open/floor/plasteel/tech/grid,
-/area/shuttle/hunter)
-"ZJ" = (
-/obj/effect/turf_decal/siding/thinplating/dark,
-/obj/effect/turf_decal/siding/thinplating/dark{
-	dir = 1
-	},
-/turf/open/floor/plasteel/techmaint,
-/area/shuttle/hunter)
-"ZO" = (
+"Gx" = (
 /obj/structure/railing{
 	dir = 10;
 	layer = 4.1
@@ -1093,9 +690,412 @@
 	layer = 3;
 	color = "#808080"
 	},
-/turf/open/floor/plasteel/elevatorshaft{
+/turf/open/floor/plating/elevatorshaft{
 	color = "#808080"
 	},
+/area/shuttle/hunter)
+"GA" = (
+/obj/machinery/door/airlock/maintenance_hatch{
+	req_access_txt = "181"
+	},
+/obj/structure/lattice/catwalk/over,
+/obj/structure/cable/yellow{
+	icon_state = "1-2"
+	},
+/obj/machinery/atmospherics/pipe/simple/purple/hidden,
+/turf/open/floor/plating,
+/area/shuttle/hunter)
+"GG" = (
+/obj/effect/turf_decal/edges/techfloor,
+/obj/effect/turf_decal/caution,
+/obj/effect/decal/cleanable/glass{
+	pixel_x = -9;
+	pixel_y = 10
+	},
+/turf/open/floor/iron/tech,
+/area/shuttle/hunter)
+"Hl" = (
+/obj/effect/turf_decal/bot,
+/obj/effect/turf_decal/bot/left,
+/obj/structure/sign/poster/official/moth4{
+	pixel_y = 32
+	},
+/obj/machinery/light{
+	dir = 1
+	},
+/obj/machinery/suit_storage_unit/bounty,
+/turf/open/floor/iron/tech/grid,
+/area/shuttle/hunter)
+"IA" = (
+/obj/effect/turf_decal/siding/thinplating/dark/corner,
+/obj/effect/turf_decal/siding/thinplating/dark/corner{
+	dir = 4
+	},
+/obj/effect/decal/cleanable/dirt/dust,
+/turf/open/floor/iron/techmaint,
+/area/shuttle/hunter)
+"IB" = (
+/obj/structure/lattice/catwalk/over,
+/obj/effect/decal/cleanable/dirt/dust,
+/obj/machinery/atmospherics/pipe/simple/purple/hidden{
+	dir = 8
+	},
+/turf/open/floor/plating,
+/area/shuttle/hunter)
+"JK" = (
+/obj/machinery/recharger,
+/obj/structure/table/reinforced{
+	color = "#c1b6a5"
+	},
+/obj/effect/turf_decal/stripes/line{
+	dir = 4
+	},
+/obj/machinery/light{
+	dir = 8
+	},
+/obj/item/cigbutt/cigarbutt{
+	pixel_y = 3;
+	pixel_x = 9
+	},
+/obj/item/storage/fancy/cigarettes/cigpack_syndicate{
+	pixel_x = -5
+	},
+/obj/item/lighter{
+	pixel_x = -8;
+	pixel_y = -3
+	},
+/turf/open/floor/iron/tech,
+/area/shuttle/hunter)
+"Kb" = (
+/obj/effect/turf_decal/siding/thinplating/dark{
+	dir = 1
+	},
+/obj/structure/sign/poster/contraband/bountyhunters{
+	pixel_y = 32
+	},
+/turf/open/floor/iron/techmaint,
+/area/shuttle/hunter)
+"Ko" = (
+/obj/structure/railing/corner,
+/obj/effect/turf_decal/edges/techfloor,
+/obj/effect/decal/cleanable/dirt/dust,
+/turf/open/floor/iron/tech,
+/area/shuttle/hunter)
+"Lo" = (
+/turf/closed/wall/mineral/titanium/survival,
+/area/shuttle/hunter)
+"Lr" = (
+/obj/structure/rack,
+/obj/effect/turf_decal/edges/techfloor,
+/obj/effect/turf_decal/stripes/corner{
+	dir = 1
+	},
+/obj/item/storage/toolbox/electrical,
+/obj/item/clothing/glasses/welding{
+	pixel_y = 5
+	},
+/obj/item/screwdriver{
+	pixel_y = -1
+	},
+/obj/structure/sign/poster/official/safety_internals{
+	pixel_x = -32
+	},
+/turf/open/floor/iron/tech,
+/area/shuttle/hunter)
+"Ly" = (
+/obj/effect/turf_decal/tile/dark/fourcorners/contrasted,
+/obj/structure/sign/poster/official/work_for_a_future{
+	pixel_y = -32
+	},
+/obj/effect/turf_decal/delivery/white,
+/obj/machinery/light{
+	dir = 4
+	},
+/obj/effect/mob_spawn/human/fugitive_hunter{
+	dir = 8
+	},
+/turf/open/floor/iron/ridged/steel,
+/area/shuttle/hunter)
+"LE" = (
+/turf/open/floor/iron/stairs/right,
+/area/shuttle/hunter)
+"Mj" = (
+/obj/structure/table/reinforced{
+	color = "#c1b6a5"
+	},
+/obj/machinery/button/door{
+	id = "hunters_windows";
+	name = "window shutters";
+	pixel_x = 7;
+	pixel_y = -3;
+	req_access_txt = "181"
+	},
+/obj/machinery/button/door{
+	id = "hunters_bridge";
+	name = "bridge shutters";
+	pixel_x = 7;
+	pixel_y = 6;
+	req_access_txt = "181"
+	},
+/obj/item/paper_bin{
+	pixel_x = -6
+	},
+/obj/item/pen/fourcolor{
+	pixel_x = -4
+	},
+/turf/open/floor/iron/tech,
+/area/shuttle/hunter)
+"Mq" = (
+/obj/effect/turf_decal/delivery,
+/obj/machinery/light{
+	dir = 1
+	},
+/obj/machinery/fugitive_capture,
+/turf/open/floor/iron/tech/grid,
+/area/shuttle/hunter)
+"MQ" = (
+/obj/machinery/door/airlock/hatch{
+	req_access_txt = "181"
+	},
+/obj/effect/turf_decal/siding/thinplating/dark{
+	dir = 1
+	},
+/obj/effect/turf_decal/siding/thinplating/dark,
+/turf/open/floor/iron/techmaint,
+/area/shuttle/hunter)
+"MR" = (
+/obj/effect/turf_decal/siding/thinplating/dark{
+	dir = 4
+	},
+/turf/open/floor/iron/dark,
+/area/shuttle/hunter)
+"Nn" = (
+/obj/effect/turf_decal/edges/techfloor,
+/obj/effect/turf_decal/edges/techfloor{
+	dir = 1
+	},
+/obj/structure/rack,
+/obj/item/melee/classic_baton/retractible_stun/bounty{
+	pixel_x = 13
+	},
+/obj/item/camera_bug{
+	pixel_x = 6;
+	pixel_y = 4
+	},
+/obj/machinery/light{
+	dir = 8
+	},
+/obj/item/storage/box/incapacitateshot{
+	pixel_x = -4;
+	pixel_y = -4
+	},
+/obj/item/storage/box/rubbershot{
+	pixel_x = 1
+	},
+/turf/open/floor/iron/tech/grid,
+/area/shuttle/hunter)
+"NG" = (
+/obj/machinery/door/poddoor/preopen{
+	id = "hunters_windows"
+	},
+/obj/structure/window/shuttle/survival_pod,
+/obj/structure/grille,
+/turf/open/floor/plating,
+/area/shuttle/hunter)
+"Og" = (
+/obj/structure/chair/fancy/shuttle{
+	dir = 4
+	},
+/obj/effect/decal/cleanable/dirt/dust,
+/turf/open/floor/iron/tech,
+/area/shuttle/hunter)
+"Pl" = (
+/obj/structure/window/reinforced{
+	dir = 4
+	},
+/obj/machinery/atmospherics/components/unary/shuttle/heater{
+	dir = 4
+	},
+/obj/machinery/door/poddoor/preopen{
+	id = "hunters_engines"
+	},
+/turf/open/floor/plating/airless,
+/area/shuttle/hunter)
+"RD" = (
+/turf/open/floor/iron/techmaint,
+/area/shuttle/hunter)
+"Sf" = (
+/obj/structure/table/reinforced{
+	color = "#c1b6a5"
+	},
+/obj/effect/turf_decal/edges/techfloor{
+	dir = 4
+	},
+/obj/machinery/cell_charger,
+/obj/item/stock_parts/cell/crap{
+	pixel_x = -7;
+	pixel_y = 2
+	},
+/obj/item/stock_parts/cell/high/empty,
+/obj/item/trash/can{
+	pixel_x = -9
+	},
+/obj/item/stack/sheet/mineral/plasma/fifty{
+	pixel_y = -8;
+	pixel_x = 4
+	},
+/obj/effect/decal/cleanable/dirt/dust,
+/obj/machinery/light/small,
+/obj/machinery/atmospherics/pipe/simple/purple/hidden{
+	dir = 9
+	},
+/turf/open/floor/iron/tech,
+/area/shuttle/hunter)
+"Su" = (
+/obj/effect/turf_decal/edges/techfloor{
+	dir = 1
+	},
+/obj/effect/decal/cleanable/oil,
+/obj/effect/decal/cleanable/dirt/dust,
+/turf/open/floor/iron/tech,
+/area/shuttle/hunter)
+"TB" = (
+/obj/structure/lattice/catwalk/over,
+/obj/item/trash/semki,
+/obj/machinery/atmospherics/pipe/simple/purple/hidden{
+	dir = 8
+	},
+/turf/open/floor/plating/rust,
+/area/shuttle/hunter)
+"Uw" = (
+/obj/machinery/computer/crew{
+	dir = 8
+	},
+/obj/effect/turf_decal/edges/techfloor{
+	dir = 1
+	},
+/obj/effect/turf_decal/edges/techfloor{
+	dir = 4
+	},
+/turf/open/floor/iron/tech,
+/area/shuttle/hunter)
+"UI" = (
+/turf/template_noop,
+/area/template_noop)
+"Vx" = (
+/obj/machinery/door/poddoor/preopen{
+	id = "hunters_bridge"
+	},
+/obj/structure/window/shuttle/survival_pod,
+/obj/structure/grille,
+/turf/open/floor/plating,
+/area/shuttle/hunter)
+"VG" = (
+/obj/effect/turf_decal/edges/techfloor,
+/obj/effect/decal/cleanable/dirt/dust,
+/turf/open/floor/iron/tech,
+/area/shuttle/hunter)
+"VH" = (
+/obj/effect/turf_decal/delivery,
+/obj/machinery/launchpad,
+/obj/effect/decal/cleanable/dirt/dust,
+/obj/effect/decal/cleanable/blood/old,
+/obj/machinery/light,
+/turf/open/floor/pod/dark,
+/area/shuttle/hunter)
+"Wa" = (
+/obj/structure/table/reinforced{
+	color = "#c1b6a5"
+	},
+/obj/item/rack_parts{
+	pixel_x = 5;
+	pixel_y = 1
+	},
+/obj/item/rack_parts{
+	pixel_y = -2
+	},
+/obj/item/storage/toolbox/mechanical{
+	pixel_y = -4
+	},
+/obj/item/clothing/mask/gas{
+	pixel_x = -4
+	},
+/obj/machinery/atmospherics/pipe/simple/purple/hidden{
+	dir = 8
+	},
+/turf/open/floor/iron/tech,
+/area/shuttle/hunter)
+"XH" = (
+/obj/structure/railing/corner,
+/obj/effect/turf_decal/edges/techfloor{
+	dir = 1
+	},
+/turf/open/floor/iron/tech,
+/area/shuttle/hunter)
+"XM" = (
+/obj/structure/table/reinforced{
+	color = "#c1b6a5"
+	},
+/obj/structure/railing{
+	dir = 8;
+	layer = 4.1
+	},
+/obj/effect/turf_decal/edges/techfloor{
+	dir = 8
+	},
+/obj/item/flashlight/lamp{
+	pixel_x = -4;
+	pixel_y = 7
+	},
+/obj/item/binoculars{
+	pixel_x = 3
+	},
+/obj/item/gps{
+	pixel_x = 7
+	},
+/turf/open/floor/iron/tech,
+/area/shuttle/hunter)
+"Yj" = (
+/obj/effect/turf_decal/siding/thinplating/dark{
+	dir = 5
+	},
+/turf/open/floor/iron/dark,
+/area/shuttle/hunter)
+"Yp" = (
+/obj/effect/turf_decal/siding/thinplating/dark{
+	dir = 8
+	},
+/obj/effect/decal/cleanable/dirt/dust,
+/obj/structure/extinguisher_cabinet{
+	pixel_x = -27;
+	pixel_y = 1
+	},
+/turf/open/floor/iron/dark,
+/area/shuttle/hunter)
+"YJ" = (
+/obj/effect/turf_decal/edges/techfloor{
+	dir = 8
+	},
+/turf/open/floor/iron/tech,
+/area/shuttle/hunter)
+"YS" = (
+/obj/machinery/atmospherics/components/unary/portables_connector/visible{
+	dir = 8
+	},
+/obj/machinery/portable_atmospherics/canister/plasma,
+/obj/effect/turf_decal/bot/right,
+/obj/effect/turf_decal/bot/left,
+/obj/machinery/light/small{
+	dir = 4
+	},
+/turf/open/floor/iron/tech/grid,
+/area/shuttle/hunter)
+"ZJ" = (
+/obj/effect/turf_decal/siding/thinplating/dark,
+/obj/effect/turf_decal/siding/thinplating/dark{
+	dir = 1
+	},
+/turf/open/floor/iron/techmaint,
 /area/shuttle/hunter)
 "ZQ" = (
 /obj/effect/turf_decal/delivery,
@@ -1198,7 +1198,7 @@ nn
 "}
 (7,1,1) = {"
 nn
-Hr
+aN
 pC
 jA
 Vx
@@ -1264,7 +1264,7 @@ ab
 sc
 ri
 nn
-rX
+mn
 fp
 lw
 nn
@@ -1309,7 +1309,7 @@ Hl
 js
 ms
 nn
-ZO
+Gx
 BE
 Ly
 nn

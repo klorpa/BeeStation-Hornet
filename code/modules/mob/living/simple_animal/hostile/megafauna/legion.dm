@@ -17,7 +17,8 @@ Difficulty: Medium
 	icon_living = "legion"
 	desc = "One of many."
 	icon = 'icons/mob/lavaland/legion.dmi'
-	attacktext = "chomps"
+	attack_verb_continuous = "chomps"
+	attack_verb_simple = "chomp"
 	attack_sound = 'sound/magic/demon_attack1.ogg'
 	speak_emote = list("echoes")
 	armour_penetration = 50
@@ -34,8 +35,7 @@ Difficulty: Medium
 	achievement_type = /datum/award/achievement/boss/legion_kill
 	crusher_achievement_type = /datum/award/achievement/boss/legion_crusher
 	score_achievement_type = /datum/award/score/legion_score
-	pixel_y = -90
-	pixel_x = -75
+	SET_BASE_PIXEL(-32, -16)
 	loot = list(/obj/item/stack/sheet/bone = 3)
 	vision_range = 13
 	wander = FALSE
@@ -106,11 +106,13 @@ Difficulty: Medium
 
 /mob/living/simple_animal/hostile/megafauna/legion/AttackingTarget()
 	. = ..()
-	if(. && ishuman(target))
-		var/mob/living/L = target
-		if(L.stat == UNCONSCIOUS)
-			var/mob/living/simple_animal/hostile/asteroid/hivelordbrood/legion/A = new(loc)
-			A.infest(L)
+	if(!. || !ishuman(target))
+		return
+	var/mob/living/living_target = target
+	switch(living_target.stat)
+		if(UNCONSCIOUS, HARD_CRIT)
+			var/mob/living/simple_animal/hostile/asteroid/hivelordbrood/legion/legion = new(loc)
+			legion.infest(living_target)
 
 /mob/living/simple_animal/hostile/megafauna/legion/proc/reset_charge()
 	ranged = TRUE

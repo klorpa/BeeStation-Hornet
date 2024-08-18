@@ -9,7 +9,7 @@
 	var/base_state = "left"
 	max_integrity = 150 //If you change this, consider changing ../door/window/brigdoor/ max_integrity at the bottom of this .dm file
 	integrity_failure = 0
-	armor = list(MELEE = 20,  BULLET = 50, LASER = 50, ENERGY = 50, BOMB = 10, BIO = 100, RAD = 100, FIRE = 70, ACID = 100, STAMINA = 0)
+	armor = list(MELEE = 20,  BULLET = 50, LASER = 50, ENERGY = 50, BOMB = 10, BIO = 100, RAD = 100, FIRE = 70, ACID = 100, STAMINA = 0, BLEED = 0)
 	visible = FALSE
 	flags_1 = ON_BORDER_1
 	opacity = FALSE
@@ -17,28 +17,34 @@
 	CanAtmosPass = ATMOS_PASS_PROC
 	interaction_flags_machine = INTERACT_MACHINE_WIRES_IF_OPEN | INTERACT_MACHINE_ALLOW_SILICON | INTERACT_MACHINE_OPEN_SILICON | INTERACT_MACHINE_REQUIRES_SILICON | INTERACT_MACHINE_OPEN
 	network_id = NETWORK_DOOR_AIRLOCKS
-	obj_flags = CAN_BE_HIT // reset zblock
+	z_flags = NONE // reset zblock
 	var/operationdelay = 5
 	var/obj/item/electronics/airlock/electronics = null
 	var/reinf = 0
 	var/shards = 2
 	var/rods = 2
 	var/cable = 1
-	var/list/debris = list()
 
-/obj/machinery/door/window/Initialize(mapload, set_dir)
+/obj/machinery/door/window/Initialize(mapload, set_dir, unres_sides)
 	. = ..()
 	if(set_dir)
 		setDir(set_dir)
 	if(req_access?.len)
 		icon_state = "[icon_state]"
 		base_state = icon_state
-	for(var/i in 1 to shards)
-		debris += new /obj/item/shard(src)
-	if(rods)
-		debris += new /obj/item/stack/rods(src, rods)
-	if(cable)
-		debris += new /obj/item/stack/cable_coil(src, cable)
+
+	if(unres_sides)
+		//remove unres_sides from directions it can't be bumped from
+		switch(dir)
+			if(NORTH,SOUTH)
+				unres_sides &= ~EAST
+				unres_sides &= ~WEST
+			if(EAST,WEST)
+				unres_sides &= ~NORTH
+				unres_sides &= ~SOUTH
+
+	src.unres_sides = unres_sides
+	update_icon()
 
 	var/static/list/loc_connections = list(
 		COMSIG_ATOM_EXIT = PROC_REF(on_exit),
@@ -47,10 +53,13 @@
 	AddElement(/datum/element/connect_loc, loc_connections)
 	RegisterSignal(src, COMSIG_COMPONENT_NTNET_RECEIVE, PROC_REF(ntnet_receive))
 
+/obj/machinery/door/window/ComponentInitialize()
+	. = ..()
+	AddComponent(/datum/component/ntnet_interface)
+
 /obj/machinery/door/window/Destroy()
 	set_density(FALSE)
 	air_update_turf(1)
-	QDEL_LIST(debris)
 	if(obj_integrity == 0)
 		playsound(src, "shatter", 70, 1)
 	electronics = null
@@ -78,16 +87,18 @@
 		return
 	if(!ismob(AM))
 		if(ismecha(AM))
-			var/obj/mecha/mecha = AM
-			if(mecha.occupant && allowed(mecha.occupant))
-				open_and_close()
-			else
-				do_animate("deny")
+			var/obj/vehicle/sealed/mecha/mecha = AM
+			for(var/O in mecha.occupants)
+				var/mob/living/occupant = O
+				if(allowed(occupant))
+					open_and_close()
+					return
+			do_animate("deny")
 		return
 	if(!SSticker)
 		return
 	var/mob/M = AM
-	if(M.restrained() || ((isdrone(M) || iscyborg(M)) && M.stat))
+	if(HAS_TRAIT(M, TRAIT_HANDS_BLOCKED) || ((isdrone(M) || iscyborg(M)) && M.stat != CONSCIOUS))
 		return
 	bumpopen(M)
 
@@ -102,12 +113,12 @@
 		do_animate("deny")
 	return
 
-/obj/machinery/door/window/CanAllowThrough(atom/movable/mover, turf/target)
+/obj/machinery/door/window/CanAllowThrough(atom/movable/mover, border_dir)
 	. = ..()
 	if(.)
 		return
 
-	if(get_dir(loc, target) == dir)
+	if(border_dir == dir)
 		return FALSE
 
 	if(istype(mover, /obj/structure/window))
@@ -123,7 +134,7 @@
 	if(get_dir(loc, T) == dir)
 		return !density
 	else
-		return 1
+		return TRUE
 
 //used in the AStar algorithm to determinate if the turf the door is on is passable
 /obj/machinery/door/window/CanAStarPass(obj/item/card/id/ID, to_dir)
@@ -132,7 +143,13 @@
 /obj/machinery/door/window/proc/on_exit(datum/source, atom/movable/leaving, direction)
 	SIGNAL_HANDLER
 
-	if(istype(leaving) && (leaving.pass_flags & PASSTRANSPARENT))
+	if(leaving.movement_type & PHASING)
+		return
+
+	if(leaving == src)
+		return // Let's not block ourselves.
+
+	if(leaving.pass_flags & PASSTRANSPARENT)
 		return
 
 	if(direction == dir && density)
@@ -142,25 +159,29 @@
 /obj/machinery/door/window/open(forced=FALSE)
 	if(operating) //doors can still open when emag-disabled
 		return 0
+
 	if(!forced)
 		if(!hasPower())
 			return 0
+
 	if(forced < 2)
 		if(obj_flags & EMAGGED)
 			return 0
+
 	if(!operating) //in case of emag
 		operating = TRUE
+
 	do_animate("opening")
-	playsound(src, 'sound/machines/windowdoor.ogg', 100, 1)
+	playsound(src, 'sound/machines/windowdoor.ogg', 100, TRUE)
 	icon_state ="[base_state]open"
 	sleep(operationdelay)
-
 	set_density(FALSE)
 	air_update_turf(1)
 	update_freelook_sight()
 
 	if(operating == 1) //emag again
 		operating = FALSE
+
 	return 1
 
 /obj/machinery/door/window/close(forced=FALSE)
@@ -195,11 +216,23 @@
 
 /obj/machinery/door/window/deconstruct(disassembled = TRUE)
 	if(!(flags_1 & NODECONSTRUCT_1) && !disassembled)
-		for(var/obj/fragment in debris)
-			fragment.forceMove(get_turf(src))
-			transfer_fingerprints_to(fragment)
-			debris -= fragment
+		if(shards)
+			drop_amount(/obj/item/shard, shards)
+		if(rods)
+			drop_amount(/obj/item/stack/rods, shards)
+		if(cable)
+			drop_amount(/obj/item/stack/cable_coil, cable)
 	qdel(src)
+
+/obj/machinery/door/window/proc/drop_amount(path, amt)
+	if(amt <= 0 || amt > 10) // please no more than 10
+		return
+	if(!ispath(path, /obj))
+		return
+	var/turf/T = get_turf(src)
+	for(var/i in 1 to amt)
+		var/obj/fragment = new path(T)
+		transfer_fingerprints_to(fragment)
 
 /obj/machinery/door/window/narsie_act()
 	add_atom_colour("#7D1919", FIXED_COLOUR_PRIORITY)
@@ -266,7 +299,7 @@
 							if("rightsecure")
 								WA.facing = "r"
 								WA.secure = TRUE
-						WA.setAnchored(TRUE)
+						WA.set_anchored(TRUE)
 						WA.state= "02"
 						WA.setDir(dir)
 						WA.update_icon()
@@ -303,18 +336,18 @@
 	if(..())
 		autoclose = FALSE
 
-/obj/machinery/door/window/try_to_crowbar(obj/item/I, mob/user)
+/obj/machinery/door/window/try_to_crowbar(obj/item/crowbar, mob/user)
 	if(density)
-		if(!HAS_TRAIT(I, TRAIT_DOOR_PRYER) && hasPower())
+		if(!HAS_TRAIT(crowbar, TRAIT_DOOR_PRYER) && hasPower())
 			to_chat(user, "<span class='warning'>The windoor's motors resist your efforts to force it!</span>")
 			return
 		else if(!hasPower())
 			to_chat(user, "<span class='warning'>You begin forcing open \the [src], the motors don't resist...</span>")
-			if(!do_after(user, 1 SECONDS, TRUE, src))
+			if(!crowbar.use_tool(src, user, 1 SECONDS))
 				return
 		else
 			to_chat(user, "<span class='warning'>You begin forcing open \the [src]...</span>")
-			if(!do_after(user, 5 SECONDS, TRUE, src))
+			if(!crowbar.use_tool(src, user, 5 SECONDS))
 				return
 		open(2)
 	else
@@ -333,7 +366,7 @@
 	// Cutting WIRE_IDSCAN grants remote access... or it would, if we could hack windowdoors.
 	return id_scan_hacked() || ..()
 
-/obj/machinery/door/window/proc/ntnet_receive(datum/source, datum/netdata/data)
+/obj/machinery/door/window/proc/ntnet_receive(datum/netdata/data)
 	// Check if the airlock is powered.
 	if(!hasPower())
 		return
@@ -342,10 +375,13 @@
 	if(is_jammed(JAMMER_PROTECTION_WIRELESS))
 		return
 
+	// Check packet access level.
+	if(!check_access_ntnet(data))
+		return
 
 	// Handle received packet.
-	var/command = data.data["data"]
-	var/command_value = data.data["data_secondary"]
+	var/command = lowertext(data.data["data"])
+	var/command_value = lowertext(data.data["data_secondary"])
 	switch(command)
 		if("open")
 			if(command_value == "on" && !density)
@@ -360,6 +396,20 @@
 				INVOKE_ASYNC(src, PROC_REF(close))
 		if("touch")
 			INVOKE_ASYNC(src, PROC_REF(open_and_close))
+
+/obj/machinery/door/window/rcd_vals(mob/user, obj/item/construction/rcd/the_rcd)
+	switch(the_rcd.mode)
+		if(RCD_DECONSTRUCT)
+			return list("mode" = RCD_DECONSTRUCT, "delay" = 50, "cost" = 32)
+	return FALSE
+
+/obj/machinery/door/window/rcd_act(mob/user, obj/item/construction/rcd/the_rcd, passed_mode)
+	switch(passed_mode)
+		if(RCD_DECONSTRUCT)
+			to_chat(user, "<span class='notice'>You deconstruct the windoor.</span>")
+			qdel(src)
+			return TRUE
+	return FALSE
 
 /obj/machinery/door/window/brigdoor
 	name = "secure door"
@@ -387,15 +437,15 @@
 	shards = 0
 	rods = 0
 	max_integrity = 50
-	armor = list(MELEE = 0,  BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 10, BIO = 100, RAD = 100, FIRE = 70, ACID = 100, STAMINA = 0)
+	armor = list(MELEE = 0,  BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 10, BIO = 100, RAD = 100, FIRE = 70, ACID = 100, STAMINA = 0, BLEED = 0)
 	resistance_flags = FIRE_PROOF | ACID_PROOF
 	operationdelay = 10
 	var/made_glow = FALSE
 
-/obj/machinery/door/window/clockwork/Initialize(mapload, set_dir)
-	. = ..()
-	for(var/i in 1 to 2)
-		debris += new/obj/item/clockwork/alloy_shards/medium/gear_bit/large(src)
+/obj/machinery/door/window/clockwork/deconstruct(disassembled)
+	if(!(flags_1 & NODECONSTRUCT_1) && !disassembled)
+		drop_amount(/obj/item/clockwork/alloy_shards/medium/gear_bit/large, 2)
+	return ..()
 
 /obj/machinery/door/window/clockwork/setDir(direct)
 	if(!made_glow)
@@ -580,3 +630,42 @@
 	dir = SOUTH
 	icon_state = "rightsecure"
 	base_state = "rightsecure"
+
+/obj/machinery/door/window/checkpoint
+	icon_state = "sec_left"
+	base_state = "sec_left"
+	layer = ABOVE_MOB_LAYER
+	closingLayer = ABOVE_MOB_LAYER
+	req_access = list(ACCESS_SEC_DOORS)
+
+/obj/machinery/door/window/checkpoint/northleft
+	dir = NORTH
+
+/obj/machinery/door/window/checkpoint/eastleft
+	dir = EAST
+
+/obj/machinery/door/window/checkpoint/westleft
+	dir = WEST
+
+/obj/machinery/door/window/checkpoint/southleft
+	dir = SOUTH
+
+/obj/machinery/door/window/checkpoint/northright
+	dir = NORTH
+	icon_state = "sec_right"
+	base_state = "sec_right"
+
+/obj/machinery/door/window/checkpoint/eastright
+	dir = EAST
+	icon_state = "sec_right"
+	base_state = "sec_right"
+
+/obj/machinery/door/window/checkpoint/westright
+	dir = WEST
+	icon_state = "sec_right"
+	base_state = "sec_right"
+
+/obj/machinery/door/window/checkpoint/southright
+	dir = SOUTH
+	icon_state = "sec_right"
+	base_state = "sec_right"

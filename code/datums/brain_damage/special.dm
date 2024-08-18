@@ -23,11 +23,13 @@
 			speak("neutral", prob(25))
 
 /datum/brain_trauma/special/godwoken/on_gain()
-	ADD_TRAIT(owner, TRAIT_HOLY, TRAUMA_TRAIT)
+	owner.AddComponent(/datum/component/anti_magic, TRAUMA_TRAIT, _magic = FALSE, _holy = TRUE)
 	..()
 
 /datum/brain_trauma/special/godwoken/on_lose()
-	REMOVE_TRAIT(owner, TRAIT_HOLY, TRAUMA_TRAIT)
+	for (var/datum/component/anti_magic/anti_magic in owner.GetComponents(/datum/component/anti_magic))
+		if (anti_magic.source == TRAUMA_TRAIT)
+			qdel(anti_magic)
 	..()
 
 /datum/brain_trauma/special/godwoken/proc/speak(type, include_owner = FALSE)
@@ -192,8 +194,7 @@
 	scan_desc = "criminal mind"
 	gain_text = "<span class='warning'>Justice is coming for you.</span>"
 	lose_text = "<span class='notice'>You were absolved for your crimes.</span>"
-	clonable = FALSE
-	random_gain = FALSE
+	trauma_flags = TRAUMA_NOT_RANDOM
 	var/obj/effect/hallucination/simple/securitron/beepsky
 
 /datum/brain_trauma/special/beepsky/on_gain()

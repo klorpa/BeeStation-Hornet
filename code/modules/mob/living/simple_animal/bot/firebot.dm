@@ -8,7 +8,7 @@
 	name = "\improper Firebot"
 	desc = "A little fire extinguishing bot. He looks rather anxious."
 	icon = 'icons/mob/aibots.dmi'
-	icon_state = "firebot"
+	icon_state = "firebot0"
 	density = FALSE
 	anchored = FALSE
 	health = 25
@@ -42,9 +42,10 @@
 /mob/living/simple_animal/bot/firebot/Initialize(mapload)
 	. = ..()
 	update_icon()
-	var/datum/job/station_engineer/J = new/datum/job/station_engineer
-	access_card.access += J.get_access()
-	prev_access = access_card.access
+
+	var/datum/job/J = SSjob.GetJob(JOB_NAME_STATIONENGINEER)
+	access_card.access = J.get_access()
+	prev_access = access_card.access.Copy()
 
 	create_extinguisher()
 
@@ -60,6 +61,8 @@
 
 /mob/living/simple_animal/bot/firebot/UnarmedAttack(atom/A)
 	if(!on)
+		return
+	if(HAS_TRAIT(src, TRAIT_HANDS_BLOCKED))
 		return
 	if(internal_ext)
 		internal_ext.afterattack(A, src)
@@ -303,7 +306,7 @@
 	var/atom/Tsec = drop_location()
 
 	new /obj/item/assembly/prox_sensor(Tsec)
-	new /obj/item/clothing/head/hardhat/red(Tsec)
+	new /obj/item/clothing/head/utility/hardhat/red(Tsec)
 
 	var/turf/T = get_turf(Tsec)
 

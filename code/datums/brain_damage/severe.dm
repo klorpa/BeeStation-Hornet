@@ -104,18 +104,16 @@
 	..()
 	for(var/X in paralysis_traits)
 		ADD_TRAIT(owner, X, "trauma_paralysis")
-	owner.update_disabled_bodyparts()
 
 /datum/brain_trauma/severe/paralysis/on_lose()
 	..()
 	for(var/X in paralysis_traits)
 		REMOVE_TRAIT(owner, X, "trauma_paralysis")
-	owner.update_disabled_bodyparts()
 
 /datum/brain_trauma/severe/paralysis/paraplegic
-	random_gain = FALSE
 	paralysis_type = "legs"
 	resilience = TRAUMA_RESILIENCE_ABSOLUTE
+	trauma_flags = TRAUMA_DEFAULT_FLAGS | TRAUMA_NOT_RANDOM
 
 /datum/brain_trauma/severe/narcolepsy
 	name = "Narcolepsy"
@@ -227,11 +225,11 @@
 	lose_text = "<span class='notice'>You feel in control of your hands again.</span>"
 
 /datum/brain_trauma/severe/discoordination/on_gain()
-	ADD_TRAIT(owner, TRAIT_MONKEYLIKE, TRAUMA_TRAIT)
+	ADD_TRAIT(owner, TRAIT_DISCOORDINATED, TRAUMA_TRAIT)
 	..()
 
 /datum/brain_trauma/severe/discoordination/on_lose()
-	REMOVE_TRAIT(owner, TRAIT_MONKEYLIKE, TRAUMA_TRAIT)
+	REMOVE_TRAIT(owner, TRAIT_DISCOORDINATED, TRAUMA_TRAIT)
 	..()
 
 /datum/brain_trauma/severe/pacifism

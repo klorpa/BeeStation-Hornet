@@ -9,6 +9,8 @@
 #define STATUS_EFFECT_REPLACE 2
 /// if it only allows one, and new instances just instead refresh the timer
 #define STATUS_EFFECT_REFRESH 3
+/// call a merge proc to combine 2 status effects
+#define STATUS_EFFECT_MERGE 4
 
 //-------//
 // BUFFS //
@@ -31,7 +33,7 @@
 
 #define STATUS_EFFECT_FLESHMEND /datum/status_effect/fleshmend //! Very fast healing; suppressed by fire, and heals less fire damage
 
-#define STATUS_EFFECT_CHANGELING_CAMO /datum/status_effect/changeling/camoflague //! Makes you slowly invisible over time, taking damage, being bumped, moving or burning removes the effect.
+#define STATUS_EFFECT_CHANGELING_CAMO /datum/status_effect/changeling/camouflage //! Makes you slowly invisible over time, taking damage, being bumped, moving or burning removes the effect.
 
 #define STATUS_EFFECT_CHANGELING_MINDSHIELD /datum/status_effect/changeling/mindshield //! Causes you to appear to have a mindshield to security HUDs.
 
@@ -97,7 +99,7 @@
 
 #define STATUS_EFFECT_GO_AWAY /datum/status_effect/go_away //! makes you launch through walls in a single direction for a while
 
-#define STATUS_EFFECT_STASIS /datum/status_effect/incapacitating/stasis //! Halts biological functions like bleeding, chemical processing, blood regeneration, walking, etc
+#define STATUS_EFFECT_STASIS /datum/status_effect/grouped/stasis //! Halts biological functions like bleeding, chemical processing, blood regeneration, walking, etc
 
 #define STATUS_EFFECT_SYRINGE /datum/status_effect/syringe //used to handle being injected with a syringe
 
@@ -113,7 +115,11 @@
 
 #define STATUS_EFFECT_COCOONED /datum/status_effect/cocooned /// If a moth is in a cocoon
 
+#define STATUS_EFFECT_SMOKE /datum/status_effect/smoke
+
 #define STATUS_EFFECT_LING_TRANSFORMATION /datum/status_effect/ling_transformation // transform stung by a changeling
+
+#define STATUS_EFFECT_BLEED /datum/status_effect/bleeding
 
 //---------//
 // NEUTRAL //
@@ -138,8 +144,10 @@
 #define STATUS_EFFECT_RAINBOWPROTECTION /datum/status_effect/rainbow_protection //! Invulnerable and pacifistic
 #define STATUS_EFFECT_SLIMESKIN /datum/status_effect/slimeskin //! Increased armor
 
-// Stasis helpers
+// Grouped effect sources, see also code/__DEFINES/traits.dm
+#define STASIS_MACHINE_EFFECT "stasis_machine"
 
+// Stasis helpers
 #define STASIS_ASCENSION_EFFECT "heretic_ascension"
 
 #define IS_IN_STASIS(mob) (mob.has_status_effect(STATUS_EFFECT_STASIS))

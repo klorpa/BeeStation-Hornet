@@ -4,15 +4,16 @@
 	desc = "An all-terrain vehicle built for traversing rough terrain with ease. One of the few old-Earth technologies that are still relevant on most planet-bound outposts."
 	icon_state = "atv"
 	max_integrity = 150
-	armor = list(MELEE = 50,  BULLET = 25, LASER = 20, ENERGY = 0, BOMB = 50, BIO = 0, RAD = 0, FIRE = 60, ACID = 60, STAMINA = 0)
+	armor = list(MELEE = 50,  BULLET = 25, LASER = 20, ENERGY = 0, BOMB = 50, BIO = 0, RAD = 0, FIRE = 60, ACID = 60, STAMINA = 0, BLEED = 0)
 	key_type = /obj/item/key
-	integrity_failure = 70
+	integrity_failure = 0.5
 	var/static/mutable_appearance/atvcover
 
 /obj/vehicle/ridden/atv/Initialize(mapload)
 	. = ..()
 	var/datum/component/riding/D = LoadComponent(/datum/component/riding)
 	D.vehicle_move_delay = 1.5
+	D.empable = TRUE
 	D.set_riding_offsets(RIDING_OFFSET_ALL, list(TEXT_NORTH = list(0, 4), TEXT_SOUTH = list(0, 4), TEXT_EAST = list(0, 4), TEXT_WEST = list( 0, 4)))
 	D.set_vehicle_dir_layer(SOUTH, ABOVE_MOB_LAYER)
 	D.set_vehicle_dir_layer(NORTH, OBJ_LAYER)
@@ -48,20 +49,20 @@
 		turret.forceMove(get_turf(src))
 		switch(dir)
 			if(NORTH)
-				turret.pixel_x = 0
-				turret.pixel_y = 4
+				turret.pixel_x = base_pixel_x
+				turret.pixel_y = base_pixel_y + 4
 				turret.layer = ABOVE_MOB_LAYER
 			if(EAST)
-				turret.pixel_x = -12
-				turret.pixel_y = 4
+				turret.pixel_x = base_pixel_x - 12
+				turret.pixel_y = base_pixel_y + 4
 				turret.layer = OBJ_LAYER
 			if(SOUTH)
-				turret.pixel_x = 0
-				turret.pixel_y = 4
+				turret.pixel_x = base_pixel_x
+				turret.pixel_y = base_pixel_y + 4
 				turret.layer = OBJ_LAYER
 			if(WEST)
-				turret.pixel_x = 12
-				turret.pixel_y = 4
+				turret.pixel_x = base_pixel_x + 12
+				turret.pixel_y = base_pixel_y + 4
 				turret.layer = OBJ_LAYER
 
 /obj/vehicle/ridden/atv/attackby(obj/item/W as obj, mob/user as mob, params)
@@ -80,7 +81,7 @@
 	return ..()
 
 /obj/vehicle/ridden/atv/process(delta_time)
-	if(obj_integrity >= integrity_failure)
+	if(obj_integrity >= integrity_failure * max_integrity)
 		return PROCESS_KILL
 	if(DT_PROB(10, delta_time))
 		return
@@ -88,7 +89,7 @@
 	smoke.set_up(0, src)
 	smoke.start()
 
-/obj/vehicle/ridden/atv/bullet_act(obj/item/projectile/P)
+/obj/vehicle/ridden/atv/bullet_act(obj/projectile/P)
 	if(prob(50) && buckled_mobs)
 		for(var/mob/M in buckled_mobs)
 			M.bullet_act(P)

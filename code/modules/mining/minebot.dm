@@ -39,8 +39,10 @@
 						  /obj/item/stack/ore/plasma, /obj/item/stack/ore/uranium, /obj/item/stack/ore/iron,
 						  /obj/item/stack/ore/bananium, /obj/item/stack/ore/titanium)
 	// Response verbs
-	response_help = "pets"
-	attacktext = "drills"
+	response_help_continuous = "pets"
+	response_help_simple = "pet"
+	attack_verb_continuous = "drills"
+	attack_verb_simple = "drill"
 	attack_sound = 'sound/weapons/circsawhit.ogg'
 	speak_emote = list("states")
 	// Light handling
@@ -58,6 +60,9 @@
 
 /mob/living/simple_animal/hostile/mining_drone/Initialize(mapload)
 	. = ..()
+
+	AddElement(/datum/element/footstep, FOOTSTEP_OBJ_ROBOT, 1, -6, vary = TRUE)
+
 	// Setup equipment
 	stored_pka = new(src)
 	stored_drill = new(src)
@@ -86,8 +91,9 @@
 
 	// Setup access
 	access_card = new /obj/item/card/id(src)
-	var/datum/job/shaft_miner/M = new
+	var/datum/job/M = SSjob.GetJob(JOB_NAME_SHAFTMINER)
 	access_card.access = M.get_access()
+
 
 /mob/living/simple_animal/hostile/mining_drone/Destroy()
 	for(var/datum/action/innate/minedrone/action in actions)
@@ -316,16 +322,16 @@
 		upgrade.onAltClick(target)
 
 /// Minebot passthrough handling (for the PKA upgrade and crushers)
-/mob/living/simple_animal/hostile/mining_drone/CanAllowThrough(atom/movable/moving_atom)
+/mob/living/simple_animal/hostile/mining_drone/CanAllowThrough(atom/movable/mover, border_dir)
 	. = ..()
-	if(istype(moving_atom, /obj/item/projectile/kinetic))
-		var/obj/item/projectile/kinetic/kinetic_proj = moving_atom
+	if(istype(mover, /obj/projectile/kinetic))
+		var/obj/projectile/kinetic/kinetic_proj = mover
 		if(kinetic_proj.kinetic_gun)
 			for(var/A as anything in kinetic_proj.kinetic_gun.get_modkits())
 				var/obj/item/borg/upgrade/modkit/modkit = A
 				if(istype(modkit, /obj/item/borg/upgrade/modkit/minebot_passthrough))
 					return TRUE
-	if(istype(moving_atom, /obj/item/projectile/destabilizer))
+	else if(istype(mover, /obj/projectile/destabilizer))
 		return TRUE
 
 /**********************Minebot Attack Handling**********************/

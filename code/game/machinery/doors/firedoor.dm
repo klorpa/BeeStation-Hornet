@@ -9,11 +9,11 @@
 /obj/machinery/door/firedoor
 	name = "firelock"
 	desc = "A convenable firelock. It has a card reader and a set of indicator lights on the side."
-	icon = 'icons/obj/doors/doorfireglass.dmi'
+	icon = 'icons/obj/doors/firelocks/doorfireglass.dmi'
 	icon_state = "door_open"
 	opacity = FALSE
 	density = FALSE
-	obj_flags = CAN_BE_HIT // reset zblock
+	z_flags = NONE // reset zblock
 	max_integrity = 300
 	resistance_flags = FIRE_PROOF
 	heat_proof = TRUE
@@ -24,7 +24,7 @@
 	layer = BELOW_OPEN_DOOR_LAYER
 	closingLayer = CLOSED_FIREDOOR_LAYER
 	assemblytype = /obj/structure/firelock_frame
-	armor = list(MELEE = 30,  BULLET = 30, LASER = 20, ENERGY = 20, BOMB = 10, BIO = 100, RAD = 100, FIRE = 95, ACID = 70, STAMINA = 0)
+	armor = list(MELEE = 30,  BULLET = 30, LASER = 20, ENERGY = 20, BOMB = 10, BIO = 100, RAD = 100, FIRE = 95, ACID = 70, STAMINA = 0, BLEED = 0)
 	interaction_flags_machine = INTERACT_MACHINE_WIRES_IF_OPEN | INTERACT_MACHINE_ALLOW_SILICON | INTERACT_MACHINE_OPEN_SILICON | INTERACT_MACHINE_REQUIRES_SILICON | INTERACT_MACHINE_OPEN
 	air_tight = TRUE
 	open_speed = 2
@@ -63,7 +63,7 @@
 	icon_state = "door_closed"
 	opacity = TRUE
 	density = TRUE
-	obj_flags = CAN_BE_HIT | BLOCK_Z_IN_DOWN | BLOCK_Z_IN_UP
+	z_flags = Z_BLOCK_IN_DOWN | Z_BLOCK_IN_UP
 	processing_flags = START_PROCESSING_ON_INIT
 
 //see also turf/AfterChange for adjacency shennanigans
@@ -86,13 +86,12 @@
 		return ..()
 	return FALSE
 
+/obj/machinery/door/firedoor/bumpopen(mob/living/user)
+	return FALSE //No bumping to open, not even in mechs
 
 /obj/machinery/door/firedoor/power_change()
-	if(powered(power_channel))
-		set_machine_stat(machine_stat & ~NOPOWER)
-		INVOKE_ASYNC(src, PROC_REF(latetoggle))
-	else
-		set_machine_stat(machine_stat | NOPOWER)
+	. = ..()
+	INVOKE_ASYNC(src, PROC_REF(latetoggle))
 
 /obj/machinery/door/firedoor/attack_hand(mob/user)
 	. = ..()
@@ -111,11 +110,6 @@
 /obj/machinery/door/firedoor/attackby(obj/item/C, mob/user, params)
 	add_fingerprint(user)
 	if(operating)
-		return
-
-	if(istype(C, /obj/item/modular_computer/tablet/pda))
-		var/attack_verb = pick("smushes","rubs","smashes","presses","taps")
-		visible_message("<span class='warning'>[user] [attack_verb] \the [C] against [src]\s card reader.</span>", "<span class='warning'>You [attack_verb] \the [C] against [src]\s card reader. It doesn't do anything.</span>", "You hear plastic click against metal.")
 		return
 
 	if(welded)
@@ -153,19 +147,19 @@
 	if(!density || welded)
 		return
 
-	if(isidcard(I))
-		if((check_safety(user) == TRUE) || check_access(I))
-			log_opening(I, user, check_safety(user))
+	var/obj/item/card/id/id_card = I.GetID()
+	if(istype(id_card))
+		if((check_safety(user) == TRUE) || check_access(id_card))
+			log_opening(id_card, user, check_safety(user))
 			playsound(src, 'sound/machines/beep.ogg', 50, 1)
 			open()
 			return
 		else
-			log_opening(I, user, -1)
+			log_opening(id_card, user, -1)
 			to_chat(user, "<span class='danger'>Access Denied, User not authorized to override alarms or pressure checks.</span>")
 			playsound(src, 'sound/machines/terminal_error.ogg', 50, 1)
 			return
 	to_chat("<span class='warning'>You try to pull the card reader. Nothing happens.</span>")
-	return
 
 /obj/machinery/door/firedoor/proc/log_opening(obj/item/card/id/I, mob/user, safe)
 	var/safestate = "UNK_STATE:"
@@ -196,7 +190,7 @@
 		update_icon()
 
 
-/obj/machinery/door/firedoor/try_to_crowbar(obj/item/I, mob/user)
+/obj/machinery/door/firedoor/try_to_crowbar(obj/item/crowbar, mob/user)
 	if(welded || operating)
 		return
 
@@ -207,12 +201,12 @@
 				access_log.Remove(access_log[1])
 			to_chat(user, "<span class='warning'>You begin forcing open \the [src], the motors whine...</span>")
 			playsound(src, 'sound/machines/airlock_alien_prying.ogg', 100, TRUE)
-			if(!do_after(user, 10 SECONDS, src))
+			if(!crowbar.use_tool(src, user, 10 SECONDS))
 				return
 		else
 			to_chat(user, "<span class='notice'>You begin forcing open \the [src], the motors don't resist...</span>")
 			playsound(src, 'sound/machines/airlock_alien_prying.ogg', 100, TRUE)
-			if(!do_after(user, 1 SECONDS, TRUE, src))
+			if(!crowbar.use_tool(src, user, 1 SECONDS))
 				return
 		if(!check_safety(user))
 			log_game("[key_name(user)] has opened a firelock with a pressure difference or a fire alarm at [AREACOORD(loc)], using a crowbar")
@@ -367,7 +361,7 @@
 			F.constructionStep = CONSTRUCTION_PANEL_OPEN
 		else
 			F.constructionStep = CONSTRUCTION_WIRES_EXPOSED
-			F.obj_integrity = F.max_integrity * 0.5
+			F.update_integrity(F.max_integrity * 0.5)
 		F.update_icon()
 	qdel(src)
 
@@ -384,7 +378,7 @@
 			close()
 
 /obj/machinery/door/firedoor/border_only
-	icon = 'icons/obj/doors/edge_Doorfire.dmi'
+	icon = 'icons/obj/doors/firelocks/edge_Doorfire.dmi'
 	flags_1 = ON_BORDER_1
 	CanAtmosPass = ATMOS_PASS_PROC
 	assemblytype = /obj/structure/firelock_frame/border
@@ -459,13 +453,19 @@
 		return 0 // not big enough to matter
 	return start_point.air.return_pressure() < 20 ? -1 : 1
 
-/obj/machinery/door/firedoor/border_only/CanAllowThrough(atom/movable/mover, turf/target)
+/obj/machinery/door/firedoor/border_only/CanAllowThrough(atom/movable/mover, border_dir)
 	. = ..()
-	if(!(get_dir(loc, target) == dir)) //Make sure looking at appropriate border
+	if(!(border_dir == dir)) //Make sure looking at appropriate border
 		return TRUE
 
 /obj/machinery/door/firedoor/border_only/proc/on_exit(datum/source, atom/movable/leaving, direction)
 	SIGNAL_HANDLER
+
+	if(leaving.movement_type & PHASING)
+		return
+
+	if(leaving == src)
+		return // Let's not block ourselves.
 
 	if(direction == dir && density)
 		leaving.Bump(src)
@@ -479,7 +479,7 @@
 
 /obj/machinery/door/firedoor/heavy
 	name = "heavy firelock"
-	icon = 'icons/obj/doors/doorfire.dmi'
+	icon = 'icons/obj/doors/firelocks/doorfire.dmi'
 	glass = FALSE
 	explosion_block = 2
 	assemblytype = /obj/structure/firelock_frame/heavy
@@ -487,7 +487,7 @@
 
 /obj/machinery/door/firedoor/window
 	name = "firelock window shutter"
-	icon = 'icons/obj/doors/doorfirewindow.dmi'
+	icon = 'icons/obj/doors/firelocks/doorfirewindow.dmi'
 	desc = "A second window that slides in when the original window is broken, designed to protect against hull breaches. Truly a work of genius by NT engineers."
 	glass = TRUE
 	explosion_block = 0
@@ -513,11 +513,11 @@
 /obj/structure/firelock_frame
 	name = "firelock frame"
 	desc = "A partially completed firelock."
-	icon = 'icons/obj/doors/doorfire.dmi'
+	icon = 'icons/obj/doors/firelocks/doorfire.dmi'
 	icon_state = "frame1"
 	anchored = FALSE
 	density = TRUE
-	obj_flags = CAN_BE_HIT | BLOCK_Z_IN_DOWN | BLOCK_Z_IN_UP
+	z_flags = Z_BLOCK_IN_DOWN | Z_BLOCK_IN_UP
 	var/constructionStep = CONSTRUCTION_NOCIRCUIT
 	var/reinforced = 0
 	var/firelock_type = /obj/machinery/door/firedoor
@@ -742,7 +742,7 @@
 
 /obj/structure/firelock_frame/border
 	name = "firelock frame"
-	icon = 'icons/obj/doors/edge_Doorfire.dmi'
+	icon = 'icons/obj/doors/firelocks/edge_Doorfire.dmi'
 	icon_state = "door_frame"
 	density = FALSE
 	firelock_type = /obj/machinery/door/firedoor/border_only
@@ -762,7 +762,7 @@
 
 /obj/structure/firelock_frame/window
 	name = "window firelock frame"
-	icon = 'icons/obj/doors/doorfirewindow.dmi'
+	icon = 'icons/obj/doors/firelocks/doorfirewindow.dmi'
 	icon_state = "door_frame"
 	firelock_type = /obj/machinery/door/firedoor/window
 

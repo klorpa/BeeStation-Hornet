@@ -25,6 +25,7 @@
 		power_efficiency = C.rating
 	var/datum/component/riding/D = GetComponent(/datum/component/riding)
 	D.vehicle_move_delay = round(1.5 * delay_multiplier) / speed
+	D.empable = TRUE
 
 
 /obj/vehicle/ridden/wheelchair/motorized/get_cell()
@@ -32,12 +33,10 @@
 
 /obj/vehicle/ridden/wheelchair/motorized/obj_destruction(damage_flag)
 	var/turf/T = get_turf(src)
-	for(var/atom/movable/A in contents)
-		A.forceMove(T)
-		if(isliving(A))
-			var/mob/living/L = A
-			L.update_mobility()
-	..()
+	for(var/c in contents)
+		var/atom/movable/thing = c
+		thing.forceMove(T)
+	return ..()
 
 /obj/vehicle/ridden/wheelchair/motorized/driver_move(mob/living/user, direction)
 	if(istype(user))
@@ -53,7 +52,7 @@
 			canmove = FALSE
 			addtimer(VARSET_CALLBACK(src, canmove, TRUE), 20)
 			return FALSE
-		if(user.get_num_arms() < arms_required)
+		if(user.usable_hands < arms_required)
 			to_chat(user, "<span class='warning'>You don't have enough arms to operate the motor controller!</span>")
 			canmove = FALSE
 			addtimer(VARSET_CALLBACK(src, canmove, TRUE), 20)
@@ -130,11 +129,9 @@
 		new /obj/item/stack/rods(drop_location(), 8)
 		new /obj/item/stack/sheet/iron(drop_location(), 10)
 		var/turf/T = get_turf(src)
-		for(var/atom/movable/A in contents)
-			A.forceMove(T)
-			if(isliving(A))
-				var/mob/living/L = A
-				L.update_mobility()
+		for(var/c in contents)
+			var/atom/movable/thing = c
+			thing.forceMove(T)
 		qdel(src)
 	return TRUE
 
@@ -156,8 +153,11 @@
 		var/atom/throw_target = get_edge_target_turf(H, pick(GLOB.cardinals))
 		unbuckle_mob(H)
 		H.throw_at(throw_target, 2, 3)
-		H.Knockdown(100)
-		H.adjustStaminaLoss(40)
+		var/multiplier = 1
+		if(HAS_TRAIT(H, TRAIT_PROSKATER))
+			multiplier = 0.7 //30% reduction
+		H.Knockdown(100 * multiplier)
+		H.adjustStaminaLoss(40 * multiplier)
 		if(isliving(M))
 			var/mob/living/D = M
 			throw_target = get_edge_target_turf(D, pick(GLOB.cardinals))

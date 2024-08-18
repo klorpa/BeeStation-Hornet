@@ -5,8 +5,6 @@
 
 // where all the reagents related to medicine go.
 
-#define MINOR_DAMAGE_THRESHOLD 20 // a temporary define as "what is minor damage". this can be changed. feel free to change.
-
 /datum/reagent/medicine
 	name = "Medicine"
 	chem_flags = CHEMICAL_NOT_DEFINED
@@ -15,6 +13,8 @@
 /datum/reagent/medicine/on_mob_life(mob/living/carbon/M)
 	current_cycle++
 	holder.remove_reagent(type, metabolization_rate / M.metabolism_efficiency) //medicine reagents stay longer if you have a better metabolism
+	if(!QDELETED(holder) && metabolite) // removing a reagent can sometimes delete the holder
+		holder.add_reagent(metabolite, metabolization_rate / M.metabolism_efficiency * METABOLITE_RATE)
 
 /datum/reagent/medicine/leporazine
 	name = "Leporazine"
@@ -25,10 +25,16 @@
 	metabolization_rate = 0.25 * REAGENTS_METABOLISM
 
 /datum/reagent/medicine/leporazine/on_mob_life(mob/living/carbon/M)
-	if(M.bodytemperature > BODYTEMP_NORMAL)
-		M.adjust_bodytemperature(-40 * TEMPERATURE_DAMAGE_COEFFICIENT, BODYTEMP_NORMAL)
-	else if(M.bodytemperature < (BODYTEMP_NORMAL + 1))
-		M.adjust_bodytemperature(40 * TEMPERATURE_DAMAGE_COEFFICIENT, 0, BODYTEMP_NORMAL)
+	if(M.bodytemperature > M.get_body_temp_normal(apply_change=FALSE))
+		M.adjust_bodytemperature(-40 * TEMPERATURE_DAMAGE_COEFFICIENT, M.get_body_temp_normal(apply_change=FALSE))
+	else if(M.bodytemperature < (M.get_body_temp_normal(apply_change=FALSE) + 1))
+		M.adjust_bodytemperature(40 * TEMPERATURE_DAMAGE_COEFFICIENT, 0, M.get_body_temp_normal(apply_change=FALSE))
+	if(ishuman(M))
+		var/mob/living/carbon/human/humi = M
+		if(humi.coretemperature > humi.get_body_temp_normal(apply_change=FALSE))
+			humi.adjust_coretemperature(-40 * TEMPERATURE_DAMAGE_COEFFICIENT, humi.get_body_temp_normal(apply_change=FALSE))
+		else if(humi.coretemperature < (humi.get_body_temp_normal(apply_change=FALSE) + 1))
+			humi.adjust_coretemperature(40 * TEMPERATURE_DAMAGE_COEFFICIENT, 0, humi.get_body_temp_normal(apply_change=FALSE))
 	..()
 
 /datum/reagent/medicine/leporazine/overdose_process(mob/living/M)
@@ -57,11 +63,11 @@
 	REMOVE_TRAITS_NOT_IN(M, list(SPECIES_TRAIT, ROUNDSTART_TRAIT, ORGAN_TRAIT, TRAIT_GENERIC))
 	M.set_blurriness(0)
 	M.set_blindness(0)
-	M.SetKnockdown(0, FALSE)
-	M.SetStun(0, FALSE)
-	M.SetUnconscious(0, FALSE)
-	M.SetParalyzed(0, FALSE)
-	M.SetImmobilized(0, FALSE)
+	M.SetKnockdown(0)
+	M.SetStun(0)
+	M.SetUnconscious(0)
+	M.SetParalyzed(0)
+	M.SetImmobilized(0)
 	M.silent = FALSE
 	M.dizziness = 0
 	M.disgust = 0
@@ -99,11 +105,11 @@
 
 /datum/reagent/medicine/synaptizine/on_mob_life(mob/living/carbon/M)
 	M.drowsyness = max(M.drowsyness-5, 0)
-	M.AdjustStun(-20, FALSE)
-	M.AdjustKnockdown(-20, FALSE)
-	M.AdjustUnconscious(-20, FALSE)
-	M.AdjustImmobilized(-20, FALSE)
-	M.AdjustParalyzed(-20, FALSE)
+	M.AdjustStun(-20)
+	M.AdjustKnockdown(-20)
+	M.AdjustUnconscious(-20)
+	M.AdjustImmobilized(-20)
+	M.AdjustParalyzed(-20)
 	if(holder.has_reagent(/datum/reagent/toxin/mindbreaker))
 		holder.remove_reagent(/datum/reagent/toxin/mindbreaker, 5)
 	M.hallucination = max(0, M.hallucination - 10)
@@ -255,6 +261,7 @@
 	chem_flags = CHEMICAL_RNG_GENERAL | CHEMICAL_RNG_FUN | CHEMICAL_RNG_BOTANY | CHEMICAL_GOAL_CHEMIST_USEFUL_MEDICINE
 	metabolization_rate = 2.5 * REAGENTS_METABOLISM
 	overdose_threshold = 100
+	metabolite = /datum/reagent/metabolite/medicine/silver_sulfadiazine
 
 /datum/reagent/medicine/silver_sulfadiazine/reaction_mob(mob/living/M, method=TOUCH, reac_volume, show_message = 1, touch_protection, obj/item/bodypart/affecting)
 	if(iscarbon(M) && M.stat != DEAD)
@@ -312,6 +319,7 @@
 	chem_flags = CHEMICAL_RNG_GENERAL | CHEMICAL_RNG_FUN | CHEMICAL_RNG_BOTANY | CHEMICAL_GOAL_CHEMIST_USEFUL_MEDICINE
 	metabolization_rate = 2.5 * REAGENTS_METABOLISM
 	overdose_threshold = 100
+	metabolite = /datum/reagent/metabolite/medicine/styptic_powder
 
 /datum/reagent/medicine/styptic_powder/reaction_mob(mob/living/M, method=TOUCH, reac_volume, show_message = 1, touch_protection, obj/item/bodypart/affecting)
 	if(iscarbon(M) && M.stat != DEAD)
@@ -661,10 +669,10 @@
 
 /datum/reagent/medicine/ephedrine/on_mob_metabolize(mob/living/L)
 	..()
-	L.add_movespeed_modifier(type, update=TRUE, priority=100, multiplicative_slowdown=-0.35, blacklisted_movetypes=(FLYING|FLOATING))//mildly slower than meth
+	L.add_movespeed_modifier(/datum/movespeed_modifier/reagent/ephedrine)//mildly slower than meth
 
 /datum/reagent/medicine/ephedrine/on_mob_end_metabolize(mob/living/L)
-	L.remove_movespeed_modifier(type)
+	L.remove_movespeed_modifier(/datum/movespeed_modifier/reagent/ephedrine)
 	..()
 
 /datum/reagent/medicine/ephedrine/on_mob_life(mob/living/carbon/M)
@@ -674,7 +682,7 @@
 			to_chat(M, "<span class ='notice'>Your hands spaz out and you drop what you were holding!</span>")
 			M.Jitter(10)
 
-	M.AdjustAllImmobility(-20, FALSE)
+	M.AdjustAllImmobility(-20)
 	M.adjustStaminaLoss(-10*REM, FALSE)
 	..()
 	return TRUE
@@ -770,10 +778,10 @@
 
 /datum/reagent/medicine/morphine/on_mob_metabolize(mob/living/L)
 	..()
-	L.ignore_slowdown(type)
+	L.add_movespeed_mod_immunities(type, /datum/movespeed_modifier/damage_slowdown)
 
 /datum/reagent/medicine/morphine/on_mob_end_metabolize(mob/living/L)
-	L.unignore_slowdown(type)
+	L.remove_movespeed_mod_immunities(type, /datum/movespeed_modifier/damage_slowdown)
 	..()
 
 /datum/reagent/medicine/morphine/on_mob_life(mob/living/carbon/M)
@@ -783,7 +791,7 @@
 		if(12 to 24)
 			M.drowsyness += 1
 		if(24 to INFINITY)
-			M.Sleeping(40, 0)
+			M.Sleeping(40)
 			. = 1
 	..()
 
@@ -907,7 +915,7 @@
 
 /datum/reagent/medicine/epinephrine/on_mob_life(mob/living/carbon/M)
 	if(M.health <= M.crit_threshold)
-		M.adjustToxLoss(-0.5*REM, 0)
+		M.adjustToxLoss(-0.5*REM, 0, 1)
 		M.adjustBruteLoss(-0.5*REM, 0)
 		M.adjustFireLoss(-0.5*REM, 0)
 		M.adjustOxyLoss(-0.5*REM, 0)
@@ -918,7 +926,7 @@
 	M.adjustStaminaLoss(-0.5*REM, 0)
 	. = 1
 	if(prob(20))
-		M.AdjustAllImmobility(-20, FALSE)
+		M.AdjustAllImmobility(-20)
 	..()
 
 /datum/reagent/medicine/epinephrine/overdose_process(mob/living/M)
@@ -1049,10 +1057,10 @@
 
 /datum/reagent/medicine/amphetamine/on_mob_metabolize(mob/living/L)
 	..()
-	L.add_movespeed_modifier(type, update=TRUE, priority=100, multiplicative_slowdown=-0.5, blacklisted_movetypes=(FLYING|FLOATING))
+	L.add_movespeed_modifier(/datum/movespeed_modifier/reagent/amphetamine)
 
 /datum/reagent/medicine/amphetamine/on_mob_end_metabolize(mob/living/L)
-	L.remove_movespeed_modifier(type)
+	L.remove_movespeed_modifier(/datum/movespeed_modifier/reagent/amphetamine)
 	..()
 
 /datum/reagent/medicine/amphetamine/on_mob_life(mob/living/carbon/M)
@@ -1061,7 +1069,7 @@
 		M.adjustToxLoss(-1*REM, 0)
 		M.adjustBruteLoss(-1*REM, 0)
 		M.adjustFireLoss(-1*REM, 0)
-	M.AdjustAllImmobility(-60, FALSE)
+	M.AdjustAllImmobility(-60)
 	M.adjustStaminaLoss(-35*REM, 0)
 	..()
 	. = 1
@@ -1121,7 +1129,7 @@
 	metabolization_rate = 0.5 * REAGENTS_METABOLISM
 
 /datum/reagent/medicine/insulin/on_mob_life(mob/living/carbon/M)
-	if(M.AdjustSleeping(-20, FALSE))
+	if(M.AdjustSleeping(-20))
 		. = 1
 	M.reagents.remove_reagent(/datum/reagent/consumable/sugar, 3)
 	..()
@@ -1134,24 +1142,18 @@
 	color = "#bf0000"
 	chem_flags = CHEMICAL_RNG_GENERAL | CHEMICAL_RNG_FUN | CHEMICAL_GOAL_BOTANIST_HARVEST
 	metabolization_rate = 0.5 * REAGENTS_METABOLISM
+	metabolite = /datum/reagent/metabolite/medicine/bicaridine
 	overdose_threshold = 30
 
 /datum/reagent/medicine/bicaridine/on_mob_life(mob/living/carbon/M)
-	if(prob(100/(2**(round(M.getBruteLoss() / MINOR_DAMAGE_THRESHOLD)))))
-		M.adjustBruteLoss(-0.5*REM, 0)
+	M.adjustBruteLoss(-1/METABOLITE_PENALTY(metabolite), 0)
 	..()
 	. = 1
-	/* Calculation:
-		0~19: 100% chance for 0.5
-		20~39: 50% chance for 0.5
-		40~59: 25% chance for 0.5
-		60~79: 12.5% chance for 0.5
-		...
-		for every 20 damage you have, the efficiency is decreased by 50%.
-	*/
 
 /datum/reagent/medicine/bicaridine/overdose_process(mob/living/M)
-	M.adjustOrganLoss(ORGAN_SLOT_LIVER, 2)
+	M.reagents.add_reagent(metabolite, 1)
+	M.reagents.remove_reagent(/datum/reagent/medicine/bicaridine, 1)
+	M.adjustOrganLoss(ORGAN_SLOT_LIVER, 1)
 	..()
 	. = 1
 
@@ -1164,8 +1166,7 @@
 	overdose_threshold = 30
 
 /datum/reagent/medicine/dexalin/on_mob_life(mob/living/carbon/M)
-	if(prob(100/(2**(round(M.getOxyLoss() / MINOR_DAMAGE_THRESHOLD)))))
-		M.adjustOxyLoss(-1.5*REM, 0)  // dexalin is rarely used, so it is 1.5 per heal instead of 0.5 like others, to give it some spotlight.
+	M.adjustOxyLoss(-1.5*REM, 0)
 	..()
 	. = 1
 
@@ -1201,16 +1202,18 @@
 	color = "#FFa800"
 	chem_flags = CHEMICAL_RNG_GENERAL | CHEMICAL_RNG_FUN | CHEMICAL_GOAL_BOTANIST_HARVEST
 	metabolization_rate = 0.5 * REAGENTS_METABOLISM
+	metabolite = /datum/reagent/metabolite/medicine/kelotane
 	overdose_threshold = 30
 
 /datum/reagent/medicine/kelotane/on_mob_life(mob/living/carbon/M)
-	if(prob(100/(2**(round(M.getFireLoss() / MINOR_DAMAGE_THRESHOLD)))))
-		M.adjustFireLoss(-0.5*REM, 0)
+	M.adjustFireLoss(-1/METABOLITE_PENALTY(metabolite), 0)
 	..()
 	. = 1
 
 /datum/reagent/medicine/kelotane/overdose_process(mob/living/M)
-	M.adjustOrganLoss(ORGAN_SLOT_LIVER, 2)
+	M.reagents.add_reagent(metabolite, 1)
+	M.reagents.remove_reagent(/datum/reagent/medicine/kelotane, 1)
+	M.adjustOrganLoss(ORGAN_SLOT_LIVER, 1)
 	..()
 	. = 1
 
@@ -1221,17 +1224,19 @@
 	color = "#00a000"
 	chem_flags = CHEMICAL_RNG_GENERAL | CHEMICAL_RNG_FUN | CHEMICAL_RNG_BOTANY | CHEMICAL_GOAL_CHEMIST_USEFUL_MEDICINE
 	metabolization_rate = 0.5 * REAGENTS_METABOLISM
-	overdose_threshold = 30
 	taste_description = "a roll of gauze"
+	metabolite = /datum/reagent/metabolite/medicine/antitoxin
+	overdose_threshold = 30
 
 /datum/reagent/medicine/antitoxin/on_mob_life(mob/living/carbon/M)
-	if(prob(100/(2**(round(M.getToxLoss() / MINOR_DAMAGE_THRESHOLD)))))
-		M.adjustToxLoss(-0.5*REM, 0)
+	M.adjustToxLoss(-1/METABOLITE_PENALTY(metabolite), 0)
 	..()
 	. = 1
 
 /datum/reagent/medicine/antitoxin/overdose_process(mob/living/M)
-	M.adjustOrganLoss(ORGAN_SLOT_LIVER, 2)
+	M.reagents.add_reagent(metabolite, 1)
+	M.reagents.remove_reagent(/datum/reagent/medicine/antitoxin, 1)
+	M.adjustOrganLoss(ORGAN_SLOT_LIVER, 1)
 	..()
 	. = 1
 
@@ -1331,24 +1336,21 @@
 	color = "#707A00" //tricord's component chems mixed together, olive.
 	chem_flags = CHEMICAL_RNG_GENERAL | CHEMICAL_RNG_FUN | CHEMICAL_RNG_BOTANY
 	metabolization_rate = 3 * REAGENTS_METABOLISM
-	overdose_threshold = 50
+	overdose_threshold = 30
 	taste_description = "grossness"
+	metabolite = /datum/reagent/metabolite/medicine/tricordrazine
 
 /datum/reagent/medicine/tricordrazine/on_mob_life(mob/living/carbon/M)
-	if(prob(100/(2**(round(M.getBruteLoss() / MINOR_DAMAGE_THRESHOLD)))))
-		M.adjustBruteLoss(-1*REM, 0)
-	if(prob(100/(2**(round(M.getFireLoss() / MINOR_DAMAGE_THRESHOLD)))))
-		M.adjustFireLoss(-1*REM, 0)
-	if(prob(100/(2**(round(M.getToxLoss() / MINOR_DAMAGE_THRESHOLD)))))
-		M.adjustToxLoss(-1*REM, 0)
-	if(prob(100/(2**(round(M.getOxyLoss() / MINOR_DAMAGE_THRESHOLD)))))
-		M.adjustOxyLoss(-1*REM, 0)
+	M.adjustBruteLoss(-2/METABOLITE_PENALTY(metabolite), 0)
+	M.adjustFireLoss(-2/METABOLITE_PENALTY(metabolite), 0)
+	M.adjustToxLoss(-2/METABOLITE_PENALTY(metabolite), 0)
+	M.adjustOxyLoss(-2/METABOLITE_PENALTY(metabolite), 0)
 	. = 1
 	..()
 
 /datum/reagent/medicine/tricordrazine/overdose_process(mob/living/M)
 	M.adjustToxLoss(2*REM, 0)
-	M.adjustOrganLoss(ORGAN_SLOT_LIVER, 3)
+	M.adjustOrganLoss(ORGAN_SLOT_LIVER, 1)
 	..()
 	. = 1
 
@@ -1361,22 +1363,6 @@
 	taste_description = "jelly"
 
 /datum/reagent/medicine/regen_jelly/on_mob_life(mob/living/carbon/M)
-	M.adjustBruteLoss(-1.5*REM, 0)
-	M.adjustFireLoss(-1.5*REM, 0)
-	M.adjustOxyLoss(-1.5*REM, 0)
-	M.adjustToxLoss(-1.5*REM, 0, TRUE) //heals TOXINLOVERs
-	. = 1
-	..()
-
-/datum/reagent/medicine/regen_ooze
-	name = "Regenerative Ooze"
-	description = "Gradually regenerates all types of damage, without harming slime anatomy."
-	reagent_state = LIQUID
-	color = "#65d891"
-	chem_flags = CHEMICAL_RNG_GENERAL | CHEMICAL_RNG_FUN | CHEMICAL_RNG_BOTANY
-	taste_description = "jelly"
-
-/datum/reagent/medicine/regen_ooze/on_mob_life(mob/living/carbon/M)
 	M.adjustBruteLoss(-0.5*REM, 0)
 	M.adjustFireLoss(-0.5*REM, 0)
 	M.adjustOxyLoss(-0.5*REM, 0)
@@ -1400,6 +1386,8 @@
 	M.adjustToxLoss(-5*REM, 0)
 	M.adjustOrganLoss(ORGAN_SLOT_BRAIN, -15*REM)
 	M.adjustCloneLoss(-3*REM, 0)
+	if (M.blood_volume < BLOOD_VOLUME_NORMAL)
+		M.blood_volume = max(M.blood_volume, min(M.blood_volume + 4, BLOOD_VOLUME_NORMAL))
 	..()
 	. = 1
 
@@ -1486,7 +1474,7 @@
 	overdose_threshold = 30
 
 /datum/reagent/medicine/changelingadrenaline/on_mob_life(mob/living/carbon/M as mob)
-	M.AdjustAllImmobility(-20, FALSE)
+	M.AdjustAllImmobility(-20)
 	M.adjustStaminaLoss(-20, 0)
 	..()
 	return TRUE
@@ -1505,10 +1493,10 @@
 
 /datum/reagent/medicine/changelinghaste/on_mob_metabolize(mob/living/L)
 	..()
-	L.add_movespeed_modifier(type, update=TRUE, priority=100, multiplicative_slowdown=-2, blacklisted_movetypes=(FLYING|FLOATING))
+	L.add_movespeed_modifier(/datum/movespeed_modifier/reagent/changelinghaste)
 
 /datum/reagent/medicine/changelinghaste/on_mob_end_metabolize(mob/living/L)
-	L.remove_movespeed_modifier(type)
+	L.remove_movespeed_modifier(/datum/movespeed_modifier/reagent/changelinghaste)
 	..()
 
 /datum/reagent/medicine/changelinghaste/on_mob_life(mob/living/carbon/M)
@@ -1547,13 +1535,13 @@
 	description = "A potent chemical that allows someone under its influence to be at full physical ability even when under massive amounts of pain."
 	chem_flags = CHEMICAL_RNG_GENERAL | CHEMICAL_RNG_FUN | CHEMICAL_RNG_BOTANY
 
-/datum/reagent/medicine/muscle_stimulant/on_mob_metabolize(mob/living/M)
+/datum/reagent/medicine/muscle_stimulant/on_mob_metabolize(mob/living/L)
 	. = ..()
-	M.ignore_slowdown(type)
+	L.add_movespeed_mod_immunities(type, /datum/movespeed_modifier/damage_slowdown)
 
-/datum/reagent/medicine/muscle_stimulant/on_mob_end_metabolize(mob/living/M)
+/datum/reagent/medicine/muscle_stimulant/on_mob_end_metabolize(mob/living/L)
 	. = ..()
-	M.unignore_slowdown(type)
+	L.remove_movespeed_mod_immunities(type, /datum/movespeed_modifier/damage_slowdown)
 
 /datum/reagent/medicine/modafinil
 	name = "Modafinil"
@@ -1569,17 +1557,17 @@
 /datum/reagent/medicine/modafinil/on_mob_metabolize(mob/living/M)
 	ADD_TRAIT(M, TRAIT_SLEEPIMMUNE, type)
 	..()
-	M.add_movespeed_modifier(type, update=TRUE, priority=100, multiplicative_slowdown=-0.25, blacklisted_movetypes=(FLYING|FLOATING))
+	M.add_movespeed_modifier(/datum/movespeed_modifier/reagent/modafil)
 
 /datum/reagent/medicine/modafinil/on_mob_end_metabolize(mob/living/M)
 	REMOVE_TRAIT(M, TRAIT_SLEEPIMMUNE, type)
 	..()
-	M.remove_movespeed_modifier(type)
+	M.remove_movespeed_modifier(/datum/movespeed_modifier/reagent/modafil)
 
 /datum/reagent/medicine/modafinil/on_mob_life(mob/living/carbon/M)
 	if(!overdosed) // We do not want any effects on OD
 		overdose_threshold = overdose_threshold + rand(-10,10)/10 // for extra fun
-		M.AdjustAllImmobility(-20, FALSE)
+		M.AdjustAllImmobility(-20)
 		M.adjustStaminaLoss(-15*REM, 0)
 		M.Jitter(1)
 		metabolization_rate = 0.01 * REAGENTS_METABOLISM * rand(5,20) // randomizes metabolism between 0.02 and 0.08 per tick
@@ -1610,13 +1598,13 @@
 			if(prob(20))
 				to_chat(M, "You have a sudden fit!")
 				M.emote("moan")
-				M.Paralyze(20, 1, 0) // you should be in a bad spot at this point unless epipen has been used
+				M.Paralyze(20) // you should be in a bad spot at this point unless epipen has been used
 		if(81)
 			to_chat(M, "You feel too exhausted to continue!") // at this point you will eventually die unless you get charcoal
 			M.adjustOxyLoss(0.1*REM, 0)
 			M.adjustStaminaLoss(0.1*REM, 0)
 		if(82 to INFINITY)
-			M.Sleeping(100, 0, TRUE)
+			M.Sleeping(100)
 			M.adjustOxyLoss(1.5*REM, 0)
 			M.adjustStaminaLoss(1.5*REM, 0)
 	..()
@@ -1686,7 +1674,7 @@
 
 /datum/reagent/medicine/polypyr  //This is intended to be an ingredient in advanced chems.
 	name = "Polypyrylium Oligomers"
-	description = "A purple mixture of short polyelectrolyte chains not easily synthesized in the laboratory. It is valued as an intermediate in the synthesis of the cutting edge pharmaceuticals."
+	description = "A purple mixture of short polyelectrolyte chains not easily synthesized in the laboratory. It is a powerful pharmaceutical drug which provides minor healing and prevents bloodloss, making it incredibly useful for the synthesis of other drugs."
 	reagent_state = SOLID
 	color = "#9423FF"
 	chem_flags = CHEMICAL_RNG_GENERAL | CHEMICAL_RNG_FUN | CHEMICAL_RNG_BOTANY | CHEMICAL_GOAL_BOTANIST_HARVEST
@@ -1697,10 +1685,9 @@
 /datum/reagent/medicine/polypyr/on_mob_life(mob/living/carbon/M) //I wanted a collection of small positive effects, this is as hard to obtain as coniine after all.
 	M.adjustOrganLoss(ORGAN_SLOT_LUNGS, -0.25)
 	M.adjustBruteLoss(-0.35, 0)
-	if(prob(50))
-		if(ishuman(M))
-			var/mob/living/carbon/human/H = M
-			H.bleed_rate = max(H.bleed_rate - 1, 0)
+	if(ishuman(M))
+		var/mob/living/carbon/human/H = M
+		H.cauterise_wounds(0.1)
 	..()
 	. = 1
 
@@ -1719,7 +1706,7 @@
 
 /datum/reagent/medicine/stabilizing_nanites
 	name = "Stabilizing nanites"
-	description = "Rapidly heals a patient out of crit by regenerating damaged cells. Nanites distribution in the blood makes them ineffective against moderately healthy targets."
+	description = "Rapidly heals a patient out of crit by regenerating damaged cells and causing blood to clot, preventing bleeding. Nanites distribution in the blood makes them ineffective against moderately healthy targets."
 	reagent_state = LIQUID
 	color = "#000000"
 	chem_flags = CHEMICAL_NOT_SYNTH | CHEMICAL_RNG_GENERAL | CHEMICAL_RNG_FUN | CHEMICAL_RNG_BOTANY
@@ -1736,4 +1723,12 @@
 	if(prob(20))
 		M.Jitter(5)
 	M.losebreath = 0
+	if (M.blood_volume < BLOOD_VOLUME_SAFE)
+		M.blood_volume = max(M.blood_volume, min(M.blood_volume + 4, BLOOD_VOLUME_SAFE))
 	..()
+
+/datum/reagent/medicine/stabilizing_nanites/on_mob_metabolize(mob/living/L)
+	ADD_TRAIT(L, TRAIT_NO_BLEEDING, type)
+
+/datum/reagent/medicine/stabilizing_nanites/on_mob_end_metabolize(mob/living/L)
+	REMOVE_TRAIT(L, TRAIT_NO_BLEEDING, type)

@@ -34,10 +34,6 @@
 	QDEL_NULL(countdown)
 	. = ..()
 
-/obj/machinery/transformer/power_change()
-	..()
-	update_icon()
-
 /obj/machinery/transformer/update_icon()
 	..()
 	if(machine_stat & (BROKEN|NOPOWER) || cooldown == 1)
@@ -54,11 +50,12 @@
 		// Only humans can enter from the west side, while lying down.
 		var/move_dir = get_dir(loc, AM.loc)
 		var/mob/living/carbon/human/H = AM
-		if((transform_standing || !(H.mobility_flags & MOBILITY_STAND)) && move_dir == EAST)// || move_dir == WEST)
+		if((transform_standing || H.body_position == LYING_DOWN) && move_dir == EAST)// || move_dir == WEST)
 			AM.forceMove(drop_location())
 			do_transform(AM)
 
-/obj/machinery/transformer/CanAllowThrough(atom/movable/mover, turf/target)
+
+/obj/machinery/transformer/CanAllowThrough(atom/movable/mover, border_dir)
 	. = ..()
 	// Allows items to go through,
 	// to stop them from blocking the conveyor belt.

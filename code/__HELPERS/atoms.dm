@@ -47,7 +47,7 @@
 		. += our_turf
 
 /// Step-towards method of determining whether one atom can see another. Similar to viewers()
-/proc/can_see(atom/source, atom/target, length=5) // I couldnt be arsed to do actual raycasting :I This is horribly inaccurate.
+/proc/can_see(atom/source, atom/target, length=7) // I couldnt be arsed to do actual raycasting :I This is horribly inaccurate.
 	var/turf/current = get_turf(source)
 	var/turf/target_turf = get_turf(target)
 	var/steps = 1
@@ -55,17 +55,13 @@
 		current = get_step_towards(current, target_turf)
 		while(current != target_turf)
 			if(steps > length)
-				return 0
-			if(current.opacity)
-				return 0
-			for(var/thing in current)
-				var/atom/A = thing
-				if(A.opacity)
-					return 0
+				return FALSE
+			if(IS_OPAQUE_TURF(current))
+				return FALSE
 			current = get_step_towards(current, target_turf)
 			steps++
+	return TRUE
 
-	return 1
 
 ///Get the cardinal direction between two atoms
 /proc/get_cardinal_dir(atom/start, atom/end)
@@ -136,7 +132,7 @@
 		return FALSE
 	if(isliving(source))
 		var/mob/living/source_mob = source
-		if(source_mob.mobility_flags & MOBILITY_STAND)
+		if(source_mob.body_position == LYING_DOWN)
 			return FALSE
 	var/goal_dir = get_dir(source, target)
 	var/clockwise_source_dir = turn(source.dir, -45)
@@ -260,7 +256,7 @@ B --><-- A
 ///Returns a chosen path that is the closest to a list of matches
 /proc/pick_closest_path(value, list/matches = get_fancy_list_of_atom_types())
 	if (value == FALSE) //nothing should be calling us with a number, so this is safe
-		value = input("Enter type to find (blank for all, cancel to cancel)", "Search for type") as null|text
+		value = tgui_input_text(usr, "Enter type to find (blank for all, cancel to cancel)", "Search for type", encode = FALSE)
 		if (isnull(value))
 			return
 	value = trim(value)
@@ -282,7 +278,8 @@ B --><-- A
 	else if(random)
 		chosen = pick(matches) || null
 	else
-		chosen = input("Select a type", "Pick Type", matches[1]) as null|anything in sort_list(matches)
+		var/list/sorted_matches = sort_list(matches)
+		chosen = tgui_input_list(usr, "Select a type", "Pick Type", sorted_matches, sorted_matches[1])
 	if(!chosen)
 		return
 	chosen = matches[chosen]

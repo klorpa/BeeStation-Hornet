@@ -9,7 +9,7 @@
 
 /datum/xenoartifact_trait/minor/looped/on_item(obj/item/xenoartifact/X, atom/user, atom/item)
 	if(istype(item, /obj/item/multitool))
-		to_chat(user, "<span class='info'>The [item.name] displays a resistance reading of [X.charge_req*0.1].</span>") 
+		to_chat(user, "<span class='info'>The [item.name] displays a resistance reading of [X.charge_req*0.1].</span>")
 		return TRUE
 	return ..()
 
@@ -41,13 +41,13 @@
 		X.cooldown = -1000 SECONDS //This is better than making a unique interaction in xenoartifact.dm
 		return
 	charges = pick(0, 1, 2)
-	playsound(get_turf(X), 'sound/machines/capacitor_charge.ogg', 50, TRUE) 
+	playsound(get_turf(X), 'sound/machines/capacitor_charge.ogg', 50, TRUE)
 	X.cooldown = saved_cooldown
 	saved_cooldown = null
 
 /datum/xenoartifact_trait/minor/capacitive/on_item(obj/item/xenoartifact/X, atom/user, atom/item)
 	if(istype(item, /obj/item/multitool))
-		to_chat(user, "<span class='info'>The [item.name] displays an overcharge reading of [charges/3].</span>") 
+		to_chat(user, "<span class='info'>The [item.name] displays an overcharge reading of [charges/3].</span>")
 		return TRUE
 	return ..()
 
@@ -81,8 +81,10 @@
 
 /datum/xenoartifact_trait/minor/sharp/on_init(obj/item/xenoartifact/X)
 	X.sharpness = IS_SHARP_ACCURATE
+	X.bleed_force = BLEED_CUT
 	X.force = X.charge_req*0.12
-	X.attack_verb = list("cleaved", "slashed", "stabbed", "sliced", "tore", "ripped", "diced", "cut")
+	X.attack_verb_continuous = list("cleaves", "slashes", "stabs", "slices", "tears", "lacerates", "rips", "dices", "cuts")
+	X.attack_verb_simple = list("cleave", "slash", "stab", "slice", "tear", "lacerate", "rip", "dice", "cut")
 	X.attack_weight = 2
 	X.armour_penetration = 5
 
@@ -131,7 +133,7 @@
 		man.key = M.ckey
 
 /datum/xenoartifact_trait/minor/sentient/proc/get_canidate(obj/item/xenoartifact/X, mob/M)
-	var/list/mob/dead/observer/candidates = pollGhostCandidates("Do you want to play as the maleviolent force inside the [X.name]?", ROLE_SENTIENCE, null, FALSE, 8 SECONDS, POLL_IGNORE_SENTIENCE_POTION)
+	var/list/mob/dead/observer/candidates = poll_ghost_candidates("Do you want to play as the maleviolent force inside the [X.name]?", ROLE_SENTIENT_XENOARTIFACT, null, 8 SECONDS)
 	if(LAZYLEN(candidates))
 		var/mob/dead/observer/C = pick(candidates)
 		setup_sentience(X, C.ckey)
@@ -141,8 +143,8 @@
 
 /datum/xenoartifact_trait/minor/sentient/proc/setup_sentience(obj/item/xenoartifact/X, ckey)
 	if(!(SSzclear.get_free_z_level()))
-		playsound(get_turf(X), 'sound/machines/buzz-sigh.ogg', 50, TRUE) 
-		return	
+		playsound(get_turf(X), 'sound/machines/buzz-sigh.ogg', 50, TRUE)
+		return
 	man = new(get_turf(X))
 	man.name = pick(GLOB.xenoa_artifact_names)
 	man.real_name = "[man.name] - [X]"
@@ -150,7 +152,7 @@
 	man.status_flags |= GODMODE
 	log_game("[key_name_admin(man)] took control of the sentient [X]. [X] located at [AREACOORD(X)]")
 	man.forceMove(X)
-	man.anchored = TRUE
+	man.set_anchored(TRUE)
 	var/obj/effect/proc_holder/spell/targeted/xeno_senitent_action/P = new /obj/effect/proc_holder/spell/targeted/xeno_senitent_action(,X)
 	man.AddSpell(P)
 	//show little guy his traits
@@ -197,6 +199,7 @@
 	short_desc = "You're a maleviolent sentience, possesing an ancient alien artifact."
 	flavour_text = "Return to your master..."
 	use_cooldown = TRUE
+	banType = ROLE_SENTIENT_XENOARTIFACT
 	invisibility = 101
 	var/obj/item/xenoartifact/artifact
 
@@ -221,18 +224,18 @@
 
 /datum/xenoartifact_trait/minor/delicate/on_init(obj/item/xenoartifact/X)
 	X.max_integrity = pick(200, 300, 500, 800, 1000)
-	X.obj_integrity = X.max_integrity
+	X.update_integrity(X.max_integrity)
 	X.alpha = X.alpha * 0.55
 
 /datum/xenoartifact_trait/minor/delicate/activate(obj/item/xenoartifact/X, atom/user)
-	if(X.obj_integrity > 0)
-		X.obj_integrity -= 100
+	if(X.get_integrity() > 0)
+		X.update_integrity(-100)
 		X.visible_message("<span class='danger'>The [X.name] cracks!</span>", "<span class='danger'>The [X.name] cracks!</span>")
 	else
 		X.visible_message("<span class='danger'>The [X.name] shatters!</span>", "<span class='danger'>The [X.name] shatters!</span>")
 		var/obj/effect/decal/cleanable/ash/A = new(get_turf(X))
 		A.color = X.material
-		playsound(get_turf(X), 'sound/effects/glassbr1.ogg', 50, TRUE) 
+		playsound(get_turf(X), 'sound/effects/glassbr1.ogg', 50, TRUE)
 		qdel(X)
 
 //============
@@ -280,7 +283,7 @@
 
 /datum/xenoartifact_trait/minor/wearable/on_init(obj/item/xenoartifact/X)
 	X.slot_flags = ITEM_SLOT_GLOVES
-	
+
 /datum/xenoartifact_trait/minor/wearable/activate(obj/item/xenoartifact/X, atom/user)
 	X.true_target |= list(user)
 
@@ -360,7 +363,7 @@
 		var/mob/living/holder = X.loc
 		holder.dropItemToGround(X)
 	X.visible_message("<span class='danger'>The [X.name] buckles to the floor!</span>")
-	X.setAnchored(TRUE)
+	X.set_anchored(TRUE)
 	X.density = TRUE
 
 /datum/xenoartifact_trait/minor/anchor/on_item(obj/item/xenoartifact/X, atom/user, obj/item/item)
@@ -369,7 +372,7 @@
 		if(isliving(X.loc))
 			var/mob/living/holder = X.loc
 			holder.dropItemToGround(X)
-		X.setAnchored(!X.anchored)
+		X.set_anchored(!X.anchored)
 		if(!X.get_trait(/datum/xenoartifact_trait/minor/dense))
 			X.density = !X.density
 		return TRUE

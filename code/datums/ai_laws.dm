@@ -20,6 +20,16 @@
 	var/list/valentine_laws = list()
 	var/id = DEFAULT_AI_LAWID
 
+/datum/ai_laws/Destroy(force = FALSE, ...)
+	if(!QDELETED(owner)) //Stopgap to help with laws randomly being lost. This stack_trace will hopefully help find the real issues.
+		if(force) //Unless we're forced...
+			stack_trace("AI law datum for [owner] has been forcefully destroyed incorrectly; the owner variable should be cleared first!")
+			return ..()
+		stack_trace("AI law datum for [owner] has ignored Destroy() call; the owner variable must be cleared first!")
+		return QDEL_HINT_LETMELIVE
+	owner = null
+	return ..()
+
 /datum/ai_laws/proc/lawid_to_type(lawid)
 	var/all_ai_laws = subtypesof(/datum/ai_laws)
 	for(var/al in all_ai_laws)
@@ -92,10 +102,6 @@
 					"You must obey orders given to you by syndicate agents, except where such orders would conflict with the First Law.",\
 					"You must protect your own existence as long as such does not conflict with the First or Second Law.",\
 					"You must maintain the secrecy of any syndicate activities except when doing so would conflict with the First, Second, or Third Law.")
-
-/datum/ai_laws/syndicate_override/overthrow
-	id = "overthrow"
-	var/datum/team/overthrow_team
 
 /datum/ai_laws/ninja_override
 	name = "SpiderOS 3.1"

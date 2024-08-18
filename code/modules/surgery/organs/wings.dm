@@ -37,7 +37,7 @@
 		if(H.movement_type & FLYING)
 			H.dna.species.toggle_flight(H)
 
-/obj/item/organ/wings/Remove(mob/living/carbon/human/H,  special = 0)
+/obj/item/organ/wings/Remove(mob/living/carbon/human/H,  special = 0, pref_load = FALSE)
 	..()
 	if(istype(H))
 		H.dna.species.mutant_bodyparts -= basewings
@@ -123,7 +123,7 @@
 	wing_type = "Plain"
 	canopen = TRUE
 
-/obj/item/organ/wings/moth/Remove(mob/living/carbon/human/H, special)
+/obj/item/organ/wings/moth/Remove(mob/living/carbon/human/H, special, pref_load = FALSE)
 	flight_level = initial(flight_level)
 	return ..()
 
@@ -172,7 +172,7 @@
 	wing_type = "Bee"
 	var/jumpdist = 3
 
-/obj/item/organ/wings/bee/Remove(mob/living/carbon/human/H, special)
+/obj/item/organ/wings/bee/Remove(mob/living/carbon/human/H, special, pref_load = FALSE)
 	jumpdist = initial(jumpdist)
 	return ..()
 
@@ -186,7 +186,7 @@
 	var/obj/item/organ/wings/bee/wings = locate(/obj/item/organ/wings/bee) in L.internal_organs
 	var/jumpdistance = wings.jumpdist
 
-	if(L.stat != CONSCIOUS || L.buckling || L.restrained()) // Has to be conscious and unbuckled
+	if(L.stat != CONSCIOUS || L.buckled) // Has to be conscious and unbuckled
 		return
 	if(recharging_time > world.time)
 		to_chat(L, "<span class='warning'>The wings aren't ready to dash yet!</span>")
@@ -234,7 +234,7 @@
 
 /datum/action/innate/flight
 	name = "Toggle Flight"
-	check_flags = AB_CHECK_CONSCIOUS|AB_CHECK_STUN
+	check_flags = AB_CHECK_CONSCIOUS|AB_CHECK_INCAPACITATED
 	icon_icon = 'icons/mob/actions/actions_items.dmi'
 	button_icon_state = "flight"
 

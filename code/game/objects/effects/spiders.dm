@@ -51,14 +51,14 @@
 			to_chat(L, "<span class='danger'>You get stuck in \the [src] for a moment.</span>")
 		L.Immobilize(1.5 SECONDS)
 	if(ismecha(AM))
-		var/obj/mecha/mech = AM
+		var/obj/vehicle/sealed/mecha/mech = AM
 		mech.step_restricted += 1 SECONDS //unlike the above, this one stacks based on number of webs. Punch the webs to destroy them you dolt.
-		if(mech.occupant && !mech.step_restricted)
-			to_chat(mech.occupant, "<span class='danger'>\the [mech] gets stuck in \the [src]!</span>")
+		if(mech.occupants && !mech.step_restricted)
+			to_chat(mech.occupants, "<span class='danger'>\the [mech] gets stuck in \the [src]!</span>")
 
-/obj/structure/spider/stickyweb/CanAllowThrough(atom/movable/mover, turf/target)
+/obj/structure/spider/stickyweb/CanAllowThrough(atom/movable/mover, border_dir)
 	. = ..()
-	if(istype(mover, /obj/item/projectile))
+	if(istype(mover, /obj/projectile))
 		return prob(30)
 
 /obj/structure/spider/eggcluster
@@ -106,7 +106,7 @@
 		ghost_ready = TRUE
 		LAZYADD(GLOB.mob_spawners[name], src)
 		SSmobs.update_spawners()
-		GLOB.poi_list |= src
+		AddElement(/datum/element/point_of_interest)
 	if(amount_grown >= grow_time *3)
 		make_AI_spider()
 
@@ -120,7 +120,7 @@
 
 /obj/structure/spider/eggcluster/attack_ghost(mob/user)
 	. = ..()
-	if(!user?.client.canGhostRole(ROLE_SPIDER, TRUE, flags_1))
+	if(!user?.client?.can_take_ghost_spawner(ROLE_SPIDER, TRUE, is_ghost_role = FALSE))
 		return
 	if(ghost_ready)
 		make_spider(user)
@@ -132,7 +132,6 @@
 		take_damage(5, BURN, 0, 0)
 
 /obj/structure/spider/eggcluster/Destroy()
-	GLOB.poi_list -= src
 	var/list/spawners = GLOB.mob_spawners[name]
 	LAZYREMOVE(spawners, src)
 	if(!LAZYLEN(spawners))
@@ -199,7 +198,7 @@
 	random_spider = new random_spider(get_turf(src))
 	random_spider.faction = faction.Copy()
 	random_spider.spider_team = spider_team
-	random_spider.set_playable()
+	random_spider.set_playable(ROLE_SPIDER, POLL_IGNORE_SPIDER)
 	spawns_remaining--
 	if(!spawns_remaining)
 		qdel(src)
@@ -218,7 +217,7 @@
 	var/list/faction = list("spiders")
 
 /obj/structure/spider/spiderling/Destroy()
-	new/obj/item/reagent_containers/food/snacks/spiderling(get_turf(src))
+	new /obj/item/food/spiderling(get_turf(src))
 	. = ..()
 
 /obj/structure/spider/spiderling/Initialize(mapload)
@@ -226,6 +225,7 @@
 	pixel_x = rand(6,-6)
 	pixel_y = rand(6,-6)
 	START_PROCESSING(SSobj, src)
+	AddElement(/datum/element/point_of_interest)
 	AddComponent(/datum/component/swarming)
 
 /obj/structure/spider/spiderling/hunter

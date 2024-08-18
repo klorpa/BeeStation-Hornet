@@ -1,14 +1,16 @@
 
-#define BEE_IDLE_ROAMING		70 //The value of idle at which a bee in a beebox will try to wander
-#define BEE_IDLE_GOHOME			0  //The value of idle at which a bee will try to go home
-#define BEE_PROB_GOHOME			35 //Probability to go home when idle is below BEE_IDLE_GOHOME
-#define BEE_PROB_GOROAM			5 //Probability to go roaming when idle is above BEE_IDLE_ROAMING
-#define BEE_TRAY_RECENT_VISIT	200	//How long in deciseconds until a tray can be visited by a bee again
-#define BEE_DEFAULT_COLOUR		"#e5e500" //the colour we make the stripes of the bee if our reagent has no colour (or we have no reagent)
+#define BEE_IDLE_ROAMING 70 //The value of idle at which a bee in a beebox will try to wander
+#define BEE_IDLE_GOHOME 0  //The value of idle at which a bee will try to go home
+#define BEE_PROB_GOHOME 35 //Probability to go home when idle is below BEE_IDLE_GOHOME
+#define BEE_PROB_GOROAM 5 //Probability to go roaming when idle is above BEE_IDLE_ROAMING
+#define BEE_TRAY_RECENT_VISIT 200 //How long in deciseconds until a tray can be visited by a bee again
+#define BEE_DEFAULT_COLOUR "#e5e500" //the colour we make the stripes of the bee if our reagent has no colour (or we have no reagent)
 
-#define BEE_POLLINATE_YIELD_CHANCE		33
-#define BEE_POLLINATE_PEST_CHANCE		33
-#define BEE_POLLINATE_POTENCY_CHANCE	50
+#define BEE_POLLINATE_YIELD_CHANCE 33
+#define BEE_POLLINATE_PEST_CHANCE 33
+#define BEE_POLLINATE_POTENCY_CHANCE 50
+
+#define BEE_FOODGROUPS RAW | MEAT | GORE /*| BUGS*/
 
 /mob/living/simple_animal/hostile/poison/bees
 	name = "bee"
@@ -21,10 +23,14 @@
 	emote_hear = list("buzzes")
 	turns_per_move = 0
 	melee_damage = 1
-	attacktext = "stings"
-	response_help  = "shoos"
-	response_disarm = "swats away"
-	response_harm   = "squashes"
+	attack_verb_continuous = "stings"
+	attack_verb_simple = "sting"
+	response_help_continuous = "shoos"
+	response_help_simple = "shoo"
+	response_disarm_continuous = "swats away"
+	response_disarm_simple = "swat away"
+	response_harm_continuous = "squashes"
+	response_harm_simple = "squash"
 	maxHealth = 6
 	health = 6
 	spacewalk = TRUE
@@ -34,7 +40,7 @@
 	ventcrawler = VENTCRAWLER_ALWAYS
 	environment_smash = ENVIRONMENT_SMASH_NONE
 	mouse_opacity = MOUSE_OPACITY_OPAQUE
-	pass_flags = PASSTABLE | PASSGRILLE | PASSMOB
+	pass_flags = PASSTABLE | PASSMOB
 	density = FALSE
 	mob_size = MOB_SIZE_TINY
 	mob_biotypes = list(MOB_ORGANIC, MOB_BUG)

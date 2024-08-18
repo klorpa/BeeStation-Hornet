@@ -50,9 +50,9 @@
 	else
 		layer = initial(layer)
 		STOP_PROCESSING(SSobj, src)
-		M.pixel_x = initial(M.pixel_x)
-		pixel_x = initial(pixel_x)
-		M.pixel_y = M.get_standard_pixel_y_offset(M.lying)
+		M.pixel_x = M.base_pixel_x
+		pixel_x = base_pixel_x
+		M.pixel_y = M.body_position_pixel_y_offset
 
 /obj/structure/chair/noose/user_unbuckle_mob(mob/living/M,mob/living/user)
 	if(has_buckled_mobs())
@@ -79,12 +79,12 @@
 		unbuckle_all_mobs(force=1)
 		M.pixel_z = initial(M.pixel_z)
 		pixel_z = initial(pixel_z)
-		M.pixel_x = initial(M.pixel_x)
-		pixel_x = initial(pixel_x)
+		M.pixel_x = M.base_pixel_x
+		pixel_x = base_pixel_x
 		add_fingerprint(user)
 
 /obj/structure/chair/noose/user_buckle_mob(mob/living/carbon/human/M, mob/user, check_loc = TRUE)
-	if(!in_range(user, src) || user.stat || user.restrained() || !iscarbon(M))
+	if(!in_range(user, src) || user.stat != CONSCIOUS || HAS_TRAIT(user, TRAIT_HANDS_BLOCKED) || !iscarbon(M))
 		return FALSE
 
 	if (!M.get_bodypart("head"))
@@ -95,7 +95,7 @@
 		return FALSE //Can only noose someone if they're on the same tile as noose
 
 	add_fingerprint(user)
-	log_combat(user, M, "Attempted to Hang", src)
+	log_combat(user, M, "Attempted to Hang", src, important = FALSE)
 	M.visible_message("<span class='danger'>[user] attempts to tie \the [src] over [M]'s neck!</span>")
 	if(user != M)
 		to_chat(user, "<span class='notice'>It will take 20 seconds and you have to stand still.</span>")
@@ -107,7 +107,7 @@
 			else
 				to_chat(M, "<span class='userdanger'>[user] ties \the [src] over your neck!</span>")
 			playsound(user.loc, 'sound/effects/noosed.ogg', 50, 1, -1)
-			log_combat(user, M, "hanged", src)
+			log_combat(user, M, "hanged", src, important = FALSE)
 			return TRUE
 	user.visible_message("<span class='warning'>[user] fails to tie \the [src] over [M]'s neck!</span>")
 	to_chat(user, "<span class='warning'>You fail to tie \the [src] over [M]'s neck!</span>")
